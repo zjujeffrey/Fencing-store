@@ -17,7 +17,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
  */
 export const meta = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `${data?.product.title ?? 'Product'} | BladeCraft`},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -103,31 +103,77 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, description, vendor} = product;
+  const detailCopy = description || 'Competition-ready equipment with verified Shopify variants and availability.';
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
+    <main className="grid gap-8 px-5 py-10 md:grid-cols-[1.08fr_.72fr] md:px-14 md:py-16">
+      <section className="grid gap-4">
+        <div className="overflow-hidden rounded-lg bg-[#d9e0e7]">
+          <ProductImage image={selectedVariant?.image} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <img
+            alt=""
+            className="aspect-[4/3] w-full rounded-lg object-cover"
+            src="/assets/fencer-weapon.jpg"
+          />
+          <img
+            alt=""
+            className="aspect-[4/3] w-full rounded-lg object-cover"
+            src="/assets/fencer-pair.jpg"
+          />
+        </div>
+      </section>
+
+      <section className="self-start rounded-lg border border-[#d9e0e7] bg-white p-6 shadow-sm md:sticky md:top-28">
+        <p className="mb-3 inline-flex rounded bg-[#c92337]/10 px-2 py-1 text-xs font-black uppercase text-[#c92337]">
+          {vendor || 'Shopify'}
+        </p>
+        <h1 className="mb-4 text-[clamp(2.4rem,5vw,4.4rem)] font-black leading-none">
+          {title}
+        </h1>
+        <p className="leading-7 text-[#61707f]">{detailCopy}</p>
+        <div className="my-6 flex items-center justify-between gap-4 border-y border-[#d9e0e7] py-5">
+          <strong className="text-3xl">
+            <ProductPrice
+              price={selectedVariant?.price}
+              compareAtPrice={selectedVariant?.compareAtPrice}
+            />
+          </strong>
+          <span className="font-bold text-[#61707f]">
+            Ships in 1-2 business days
+          </span>
+        </div>
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
+        <div className="mt-6 grid gap-3 md:grid-cols-3">
+          {['Verified fit', 'Club ready', 'Secure checkout'].map((label) => (
+            <div
+              className="grid min-h-24 place-items-center rounded-lg border border-[#d9e0e7] p-3 text-center text-xs font-black"
+              key={label}
+            >
+              <span className="text-2xl text-[#0a7c86]">◆</span>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="md:col-span-2">
+        <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
+          Details
         </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
-      </div>
+        <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
+          Protection with a clean competitive fit.
+        </h2>
+        <div
+          className="mt-5 max-w-3xl leading-8 text-[#61707f]"
+          dangerouslySetInnerHTML={{__html: descriptionHtml}}
+        />
+      </section>
       <Analytics.ProductView
         data={{
           products: [
@@ -143,7 +189,7 @@ export default function Product() {
           ],
         }}
       />
-    </div>
+    </main>
   );
 }
 

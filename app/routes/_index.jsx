@@ -34,8 +34,8 @@ export default function Homepage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button to="/shop">Shop New Gear</Button>
-            <Button to="/club" variant="secondary">
-              Outfit A Club
+            <Button to="/shop#kit" variant="secondary">
+              Build A Starter Kit
             </Button>
           </div>
         </div>
@@ -95,10 +95,10 @@ export default function Homepage() {
         <div className="mb-9 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-              Shopify powered
+              Featured equipment
             </p>
             <h2 className="text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
-              Live products from your Shopify backend.
+              Competition-ready picks.
             </h2>
           </div>
           <Button to="/shop" variant="outline">
@@ -185,7 +185,7 @@ function ProductCard({product}) {
       </Link>
       <div className="p-5">
         <p className="mb-3 inline-flex rounded bg-[#c92337]/10 px-2 py-1 text-xs font-black uppercase text-[#c92337]">
-          Shopify
+          {product.vendor || 'Shopify'}
         </p>
         <h3 className="mb-2 text-lg font-black">
           <Link className="hover:text-[#c92337]" to={`/products/${product.handle}`}>
@@ -229,6 +229,7 @@ const FEATURED_PRODUCTS_QUERY = `#graphql
         id
         title
         handle
+        vendor
         featuredImage {
           url
           altText

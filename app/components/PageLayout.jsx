@@ -26,6 +26,7 @@ export function PageLayout({
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <PromoBar />
       {header && (
         <Header
           header={header}
@@ -41,6 +42,16 @@ export function PageLayout({
         publicStoreDomain={publicStoreDomain}
       />
     </Aside.Provider>
+  );
+}
+
+function PromoBar() {
+  return (
+    <div className="flex gap-4 overflow-x-auto whitespace-nowrap bg-[#101820] px-5 py-2.5 text-center text-xs font-black uppercase text-white md:justify-center md:gap-14">
+      <span>Free shipping over $149</span>
+      <span>Club orders welcome</span>
+      <span>FIE-ready gear</span>
+    </div>
   );
 }
 

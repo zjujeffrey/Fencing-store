@@ -7,19 +7,30 @@ import {useAside} from '~/components/Aside';
  * @param {HeaderProps}
  */
 export function Header({isLoggedIn, cart}) {
+  const links = [
+    ['Clothing', '/shop#clothing'],
+    ['Masks', '/shop#mask'],
+    ['Weapons', '/shop#weapon'],
+    ['Bags', '/shop#bag'],
+    ['Wireless', '/shop#wireless'],
+    ['Starter Kits', '/shop#kit'],
+  ];
+
   return (
-    <header className="sticky top-0 z-30 grid grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-[#d9e0e7] bg-[#f7f8fa]/95 px-5 py-4 backdrop-blur md:px-14">
+    <header className="sticky top-0 z-30 grid grid-cols-[auto_auto_1fr] items-center gap-3 border-b border-[#d9e0e7]/80 bg-[#f7f8fa]/95 px-4 py-4 backdrop-blur md:grid-cols-[auto_1fr_auto] md:gap-6 md:px-14">
       <Link className="inline-flex items-center gap-3 font-black" prefetch="intent" to="/">
         <span className="grid h-10 w-10 place-items-center rounded-md bg-[#c92337] text-xs text-white">
           BC
         </span>
         <span>BladeCraft</span>
       </Link>
+      <HeaderMenuMobileToggle />
       <nav className="hidden justify-center gap-7 text-sm font-black md:flex">
-        <NavLink prefetch="intent" to="/shop">Shop</NavLink>
-        <NavLink prefetch="intent" to="/collections/all">Catalog</NavLink>
-        <NavLink prefetch="intent" to="/club">Club Orders</NavLink>
-        <NavLink prefetch="intent" to="/search">Search</NavLink>
+        {links.map(([label, to]) => (
+          <NavLink className="hover:text-[#c92337]" key={label} prefetch="intent" to={to}>
+            {label}
+          </NavLink>
+        ))}
       </nav>
       <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
     </header>
@@ -90,7 +101,6 @@ export function HeaderMenu({
 function HeaderCtas({isLoggedIn, cart}) {
   return (
     <nav className="flex items-center justify-end gap-3 text-sm font-black" role="navigation">
-      <HeaderMenuMobileToggle />
       <NavLink className="hidden md:inline" prefetch="intent" to="/account">
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
@@ -120,8 +130,8 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button className="grid h-11 place-items-center rounded-md border border-[#d9e0e7] bg-white px-3" onClick={() => open('search')} type="button">
-      Search
+    <button className="grid h-11 w-11 place-items-center rounded-md border border-[#d9e0e7] bg-white" aria-label="Search" onClick={() => open('search')} type="button">
+      <span aria-hidden="true">⌕</span>
     </button>
   );
 }
@@ -136,7 +146,7 @@ function CartBadge({count}) {
   return (
     <a
       href="/cart"
-      className="grid h-11 min-w-16 place-items-center rounded-md border border-[#d9e0e7] bg-white px-3"
+      className="relative grid h-11 w-11 place-items-center rounded-md border border-[#d9e0e7] bg-white"
       onClick={(e) => {
         e.preventDefault();
         open('cart');
@@ -148,7 +158,10 @@ function CartBadge({count}) {
         });
       }}
     >
-      Bag {count === null ? <span>&nbsp;</span> : count}
+      <span aria-hidden="true">Bag</span>
+      <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-[#0a7c86] px-1 text-xs font-black text-white">
+        {count === null ? <span>&nbsp;</span> : count}
+      </span>
     </a>
   );
 }

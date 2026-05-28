@@ -507,8 +507,16 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-image img {
-  height: auto;
+  aspect-ratio: 5 / 4;
+  min-height: 330px;
+  object-fit: cover;
   width: 100%;
+}
+
+@media (min-width: 45em) {
+  .product-image img {
+    min-height: 430px;
+  }
 }
 
 .product-main {
@@ -534,10 +542,22 @@ button.reset:hover:not(:has(> *)) {
 
 .product-options-item,
 .product-options-item:disabled {
-  padding: 0.25rem 0.5rem;
-  background-color: transparent;
+  min-height: 3rem;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.85rem;
+  background-color: #fff;
   font-size: 1rem;
   font-family: inherit;
+}
+
+.product-form form > button[type='submit'] {
+  min-height: 3rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid #c92337;
+  background: #c92337;
+  color: #fff;
+  font-weight: 900;
 }
 
 .product-option-label-swatch {
