@@ -1,3 +1,6 @@
+import fencerPair from '~/assets/fencer-pair.jpg';
+import fencerWeapon from '~/assets/fencer-weapon.jpg';
+
 export const meta = () => [{title: 'Club Orders | BladeCraft'}];
 
 export default function Club() {
@@ -7,7 +10,7 @@ export default function Club() {
         <img
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
-          src="/assets/fencer-pair.jpg"
+          src={fencerPair}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#101820] via-[#101820]/65 to-[#101820]/10" />
         <div className="relative max-w-3xl">
@@ -41,7 +44,12 @@ export default function Club() {
         ))}
       </section>
 
-      <section className="grid gap-8 bg-[linear-gradient(90deg,rgba(16,24,32,.96),rgba(16,24,32,.76)),url('/assets/fencer-weapon.jpg')] bg-cover bg-center px-5 py-16 text-white md:grid-cols-[1fr_.68fr] md:px-14 md:py-24">
+      <section
+        className="grid gap-8 bg-cover bg-center px-5 py-16 text-white md:grid-cols-[1fr_.68fr] md:px-14 md:py-24"
+        style={{
+          backgroundImage: `linear-gradient(90deg,rgba(16,24,32,.96),rgba(16,24,32,.76)),url(${fencerWeapon})`,
+        }}
+      >
         <div>
           <p className="mb-3 text-xs font-black uppercase text-[#d59b24]">
             Recommended pack

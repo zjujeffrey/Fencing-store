@@ -2,6 +2,10 @@ import {Await, Link, useLoaderData} from 'react-router';
 import {Suspense} from 'react';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
+import fencerClothing from '~/assets/fencer-clothing.jpg';
+import fencerMask from '~/assets/fencer-mask.jpg';
+import fencerWeapon from '~/assets/fencer-weapon.jpg';
+import gearBag from '~/assets/gear-bag.jpg';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
 
@@ -24,7 +28,7 @@ export default function Shop() {
       <InnerHero
         title="Shop the full fencing kit."
         eyebrow="Equipment catalog"
-        image="/assets/fencer-weapon.jpg"
+        image={fencerWeapon}
       >
         Find competition masks, whites, weapons, bags, scoring sets, and
         entry-level bundles for foil, epee, and sabre.
@@ -64,17 +68,17 @@ export default function Shop() {
             <CategoryTile
               title="Clothing"
               copy="Jackets, plastrons, breeches, lames"
-              image="/assets/fencer-clothing.jpg"
+              image={fencerClothing}
             />
             <CategoryTile
               title="Masks"
               copy="Foil, epee, sabre, club, coaching"
-              image="/assets/fencer-mask.jpg"
+              image={fencerMask}
             />
             <CategoryTile
               title="Bags"
               copy="Rolling bags, weapon bags, coach kits"
-              image="/assets/gear-bag.jpg"
+              image={gearBag}
             />
           </div>
 
@@ -131,7 +135,7 @@ function ProductCard({product}) {
           <img
             alt=""
             className="h-full w-full object-cover"
-            src="/assets/fencer-mask.jpg"
+            src={fencerMask}
           />
         )}
       </Link>
@@ -180,7 +184,6 @@ function CardAddButton({product, selectedVariant}) {
         {
           merchandiseId: selectedVariant.id,
           quantity: 1,
-          selectedVariant,
         },
       ]}
       onClick={() => open('cart')}

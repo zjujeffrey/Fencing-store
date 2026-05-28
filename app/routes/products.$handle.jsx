@@ -11,6 +11,8 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
+import fencerPair from '~/assets/fencer-pair.jpg';
+import fencerWeapon from '~/assets/fencer-weapon.jpg';
 
 /**
  * @type {Route.MetaFunction}
@@ -116,12 +118,12 @@ export default function Product() {
           <img
             alt=""
             className="aspect-[4/3] w-full rounded-lg object-cover"
-            src="/assets/fencer-weapon.jpg"
+            src={fencerWeapon}
           />
           <img
             alt=""
             className="aspect-[4/3] w-full rounded-lg object-cover"
-            src="/assets/fencer-pair.jpg"
+            src={fencerPair}
           />
         </div>
       </section>

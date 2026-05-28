@@ -1,5 +1,6 @@
 import {Await, Link, useLoaderData} from 'react-router';
 import {Suspense} from 'react';
+import fencerMask from '~/assets/fencer-mask.jpg';
 
 export const meta = () => [{title: 'BladeCraft Fencing Supply'}];
 
@@ -20,7 +21,12 @@ export default function Homepage() {
   return (
     <main>
       <section className="relative grid min-h-[640px] items-end overflow-hidden bg-[#101820] md:min-h-[calc(100vh-108px)]">
-        <div className="absolute inset-0 scale-[1.02] bg-[linear-gradient(90deg,rgba(16,24,32,.92),rgba(16,24,32,.67)_38%,rgba(16,24,32,.12)),url('/assets/fencer-mask.jpg')] bg-cover bg-center" />
+        <div
+          className="absolute inset-0 scale-[1.02] bg-cover bg-center"
+          style={{
+            backgroundImage: `linear-gradient(90deg,rgba(16,24,32,.92),rgba(16,24,32,.67) 38%,rgba(16,24,32,.12)),url(${fencerMask})`,
+          }}
+        />
         <div className="relative mb-10 ml-5 w-[min(760px,calc(100%-36px))] text-white md:mb-24 md:ml-20">
           <p className="mb-3 text-xs font-black uppercase text-[#d59b24]">
             Competition season edit
@@ -179,7 +185,7 @@ function ProductCard({product}) {
           <img
             alt=""
             className="h-full w-full object-cover"
-            src="/assets/fencer-mask.jpg"
+            src={fencerMask}
           />
         )}
       </Link>
