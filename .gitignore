@@ -5,3 +5,5 @@ server/data/orders.json
 tools/
 dist/
 .react-router/
+
+.shopify
