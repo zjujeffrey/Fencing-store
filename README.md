@@ -1,66 +1,65 @@
 # BladeCraft Fencing Store
 
-Independent fencing storefront built with React, Tailwind CSS, Express, and Shopify Storefront API.
+BladeCraft is a custom fencing ecommerce storefront built on Shopify Hydrogen and designed for Shopify Oxygen deployment.
 
 ## Stack
 
-- React + Vite
+- Shopify Hydrogen
+- Shopify Oxygen runtime
+- React Router
+- React
 - Tailwind CSS
-- Express API server
-- Shopify Storefront API for products, cart, and checkout
-- Stripe order prototype kept as fallback/dev experiment
+- Shopify Storefront API
 
 ## Local Development
 
 ```bash
 npm install
 cp .env.example .env
-npm run build
 npm run dev
 ```
 
-Open:
+Open the local URL printed by the Hydrogen CLI.
 
-```text
-http://127.0.0.1:4174
-```
+## Required Environment
 
-## Shopify Environment
-
-Set these in `.env` locally and in your production host:
+Set these in `.env` locally and in Oxygen environment variables for production:
 
 ```env
-SHOPIFY_STORE_DOMAIN=pf2r62-r8.myshopify.com
-SHOPIFY_STOREFRONT_ACCESS_TOKEN=your_storefront_access_token
-SHOPIFY_API_VERSION=2026-01
+SESSION_SECRET=replace_with_a_long_random_string
+PUBLIC_STORE_DOMAIN=pf2r62-r8.myshopify.com
+PUBLIC_CHECKOUT_DOMAIN=pf2r62-r8.myshopify.com
+PUBLIC_STOREFRONT_API_TOKEN=your_storefront_access_token
+PUBLIC_STOREFRONT_API_VERSION=2026-01
 ```
 
-Do not commit `.env`.
+Never commit `.env`.
 
-## Useful URLs
+## Useful Commands
 
-```text
-/shop
-/product?slug=sample-coconut-bar-soap
-/club
-/order
-/admin
-/api/shopify/status
-/api/shopify/products
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run deploy
 ```
+
+## Main Pages
+
+- `/`
+- `/shop`
+- `/club`
+- `/products/:handle`
+- `/cart`
+- `/account`
 
 ## Deployment
 
-Recommended host: Render Web Service.
-
-Build command:
+This repository is configured for Shopify Hydrogen/Oxygen.
 
 ```bash
-npm install && npm run build
+npm run build
+npm run deploy
 ```
 
-Start command:
-
-```bash
-npm start
-```
+If the Shopify CLI asks you to log in or connect a store, follow the browser prompt and choose the Shopify store that owns the Hydrogen storefront.

@@ -1,63 +1,71 @@
-# Shopify Storefront Setup
+# Shopify Hydrogen Setup
 
-This project can use Shopify as the product, cart, checkout, order, and payment backend while keeping the custom React + Tailwind storefront.
+This project uses Shopify as the product, cart, checkout, customer account, order, and payment backend. The custom storefront is built with Hydrogen and deployed to Oxygen.
 
-## 1. Create Test Products
+## 1. Prepare Shopify Products
 
-In Shopify Admin, create several products for testing:
+In Shopify Admin, create product data for fencing categories:
 
-- Mask
-- Weapon
-- Starter Kit
-- Jacket
-- Bag
-- Wireless scoring set
+- Masks
+- Weapons
+- Jackets
+- Gloves
+- Bags
+- Scoring equipment
+- Club starter kits
 
-Add prices, images, variants, and inventory.
+For each product, add title, description, price, variants, inventory, SEO handle, and images. Publish the products to the storefront channel used by Storefront API.
 
-## 2. Create Storefront API Access
+## 2. Storefront API Access
 
 In Shopify Admin:
 
-1. Go to **Settings > Apps and sales channels**
-2. Open **Develop apps**
-3. Create or open a custom app
-4. Enable **Storefront API access**
-5. Allow product and cart/checkout related Storefront API permissions
-6. Copy the Storefront API access token
+1. Go to **Settings > Apps and sales channels**.
+2. Open **Develop apps**.
+3. Create or open a custom app.
+4. Enable **Storefront API access**.
+5. Allow product, cart, checkout, and customer account related Storefront API permissions.
+6. Copy the Storefront API access token.
 
-Make sure products are published to the channel that Storefront API can access.
+## 3. Configure Local Environment
 
-## 3. Configure `.env`
-
-Copy `.env.example` to `.env` and fill:
+Create `.env` in the project root:
 
 ```env
-SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
-SHOPIFY_STOREFRONT_ACCESS_TOKEN=your_storefront_access_token
-SHOPIFY_API_VERSION=2026-01
+SESSION_SECRET=replace_with_a_long_random_string
+PUBLIC_STORE_DOMAIN=pf2r62-r8.myshopify.com
+PUBLIC_CHECKOUT_DOMAIN=pf2r62-r8.myshopify.com
+PUBLIC_STOREFRONT_API_TOKEN=your_storefront_access_token
+PUBLIC_STOREFRONT_API_VERSION=2026-01
 ```
 
 Do not commit `.env`.
 
-## 4. Verify Connection
-
-Start the app:
+## 4. Verify Locally
 
 ```bash
+npm install
 npm run dev
 ```
 
-Open:
+Open the local Hydrogen URL printed by the CLI and check:
 
-```text
-http://127.0.0.1:4174/api/shopify/status
-http://127.0.0.1:4174/api/shopify/products
+- Home page loads products from Shopify.
+- `/shop` lists Shopify products.
+- Product detail pages load with Shopify handles.
+- Cart and checkout open Shopify checkout.
+
+## 5. Deploy to Oxygen
+
+```bash
+npm run build
+npm run deploy
 ```
 
-If configured correctly, `/api/shopify/products` returns Shopify products.
+During deployment, the Shopify CLI may ask you to authenticate, choose the Shopify store, and connect or create a Hydrogen storefront.
 
-## Official Reference
+## Official References
 
+- https://shopify.dev/docs/storefronts/headless/hydrogen
+- https://shopify.dev/docs/storefronts/headless/hydrogen/deployments/oxygen
 - https://shopify.dev/docs/api/storefront
-- https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api
