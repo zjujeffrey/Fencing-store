@@ -6,6 +6,7 @@ import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerMask from '~/assets/fencer-mask.jpg';
 import fencerWeapon from '~/assets/fencer-weapon.jpg';
 import gearBag from '~/assets/gear-bag.jpg';
+import {FENCING_CATEGORIES, getCategoryId} from '~/lib/fencingCategories';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
 
@@ -36,17 +37,15 @@ export default function Shop() {
 
       <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
         <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
-          {['clothing', 'mask', 'weapon', 'bag', 'wireless', 'kit'].map(
-            (item) => (
+          {FENCING_CATEGORIES.map((category) => (
               <a
-                className="rounded-md px-3 py-3 font-black capitalize text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
-                href={`#${item}`}
-                key={item}
+                className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
+                href={`#${category.id}`}
+                key={category.id}
               >
-                {item}
+                {category.label}
               </a>
-            ),
-          )}
+            ))}
         </aside>
 
         <div className="bc-shop-content">
@@ -66,19 +65,40 @@ export default function Shop() {
 
           <div className="bc-shop-category-grid mb-8 grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
             <CategoryTile
-              title="Clothing"
-              copy="Jackets, plastrons, breeches, lames"
-              image={fencerClothing}
+              title={FENCING_CATEGORIES[0].label}
+              copy={FENCING_CATEGORIES[0].copy}
+              href={`#${FENCING_CATEGORIES[0].id}`}
+              image={fencerWeapon}
             />
             <CategoryTile
-              title="Masks"
-              copy="Foil, epee, sabre, club, coaching"
+              title={FENCING_CATEGORIES[2].label}
+              copy={FENCING_CATEGORIES[2].copy}
+              href={`#${FENCING_CATEGORIES[2].id}`}
               image={fencerMask}
             />
             <CategoryTile
-              title="Bags"
-              copy="Rolling bags, weapon bags, coach kits"
+              title={FENCING_CATEGORIES[3].label}
+              copy={FENCING_CATEGORIES[3].copy}
+              href={`#${FENCING_CATEGORIES[3].id}`}
+              image={fencerClothing}
+            />
+            <CategoryTile
+              title={FENCING_CATEGORIES[5].label}
+              copy={FENCING_CATEGORIES[5].copy}
+              href={`#${FENCING_CATEGORIES[5].id}`}
+              image={fencerWeapon}
+            />
+            <CategoryTile
+              title={FENCING_CATEGORIES[6].label}
+              copy={FENCING_CATEGORIES[6].copy}
+              href={`#${FENCING_CATEGORIES[6].id}`}
               image={gearBag}
+            />
+            <CategoryTile
+              title={FENCING_CATEGORIES[7].label}
+              copy={FENCING_CATEGORIES[7].copy}
+              href={`#${FENCING_CATEGORIES[7].id}`}
+              image={fencerClothing}
             />
           </div>
 
@@ -119,7 +139,7 @@ function ProductCard({product}) {
   return (
     <article
       className="overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm"
-      id={categoryId(product)}
+      id={getCategoryId(product)}
     >
       <Link
         className="group block aspect-[4/3] overflow-hidden bg-[#d9e0e7]"
@@ -193,11 +213,11 @@ function CardAddButton({product, selectedVariant}) {
   );
 }
 
-function CategoryTile({title, copy, image}) {
+function CategoryTile({title, copy, href, image}) {
   return (
     <a
       className="bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
-      href="/shop"
+      href={href}
     >
       <img
         alt=""
@@ -255,18 +275,6 @@ function Button({children, to, variant = 'primary'}) {
   );
 }
 
-function categoryId(product) {
-  const text = `${product.productType || ''} ${product.title || ''}`.toLowerCase();
-  if (text.includes('mask')) return 'mask';
-  if (text.includes('bag')) return 'bag';
-  if (text.includes('wireless') || text.includes('scoring')) return 'wireless';
-  if (text.includes('kit') || text.includes('starter')) return 'kit';
-  if (text.includes('jacket') || text.includes('clothing') || text.includes('white')) {
-    return 'clothing';
-  }
-  return 'weapon';
-}
-
 function formatPrice(price) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -284,6 +292,7 @@ const SHOP_PRODUCTS_QUERY = `#graphql
         handle
         vendor
         productType
+        tags
         description
         featuredImage {
           url

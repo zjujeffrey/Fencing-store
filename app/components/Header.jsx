@@ -2,20 +2,12 @@ import {Suspense} from 'react';
 import {Await, Link, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
+import {HEADER_CATEGORIES} from '~/lib/fencingCategories';
 
 /**
  * @param {HeaderProps}
  */
 export function Header({isLoggedIn, cart}) {
-  const links = [
-    ['Clothing', '/shop#clothing'],
-    ['Masks', '/shop#mask'],
-    ['Weapons', '/shop#weapon'],
-    ['Bags', '/shop#bag'],
-    ['Wireless', '/shop#wireless'],
-    ['Starter Kits', '/shop#kit'],
-  ];
-
   return (
     <header className="sticky top-0 z-30 grid grid-cols-[auto_auto_1fr] items-center gap-3 border-b border-[#d9e0e7]/80 bg-[#f7f8fa]/95 px-4 py-4 backdrop-blur md:grid-cols-[auto_1fr_auto] md:gap-6 md:px-14">
       <Link className="inline-flex items-center gap-3 font-black" prefetch="intent" to="/">
@@ -26,9 +18,14 @@ export function Header({isLoggedIn, cart}) {
       </Link>
       <HeaderMenuMobileToggle />
       <nav className="hidden justify-center gap-7 text-sm font-black md:flex">
-        {links.map(([label, to]) => (
-          <NavLink className="hover:text-[#c92337]" key={label} prefetch="intent" to={to}>
-            {label}
+        {HEADER_CATEGORIES.map((category) => (
+          <NavLink
+            className="hover:text-[#c92337]"
+            key={category.id}
+            prefetch="intent"
+            to={`/shop#${category.id}`}
+          >
+            {category.label}
           </NavLink>
         ))}
       </nav>
