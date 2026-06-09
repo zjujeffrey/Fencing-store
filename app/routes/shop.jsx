@@ -24,7 +24,7 @@ export default function Shop() {
   const {products} = useLoaderData();
 
   return (
-    <main>
+    <main className="bc-shop">
       <InnerHero
         title="Shop the full fencing kit."
         eyebrow="Equipment catalog"
@@ -34,8 +34,8 @@ export default function Shop() {
         entry-level bundles for foil, epee, and sabre.
       </InnerHero>
 
-      <section className="grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
-        <aside className="hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
+      <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
+        <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
           {['clothing', 'mask', 'weapon', 'bag', 'wireless', 'kit'].map(
             (item) => (
               <a
@@ -49,7 +49,7 @@ export default function Shop() {
           )}
         </aside>
 
-        <div>
+        <div className="bc-shop-content">
           <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
@@ -64,7 +64,7 @@ export default function Shop() {
             </Button>
           </div>
 
-          <div className="mb-8 grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
+          <div className="bc-shop-category-grid mb-8 grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
             <CategoryTile
               title="Clothing"
               copy="Jackets, plastrons, breeches, lames"
@@ -196,7 +196,7 @@ function CardAddButton({product, selectedVariant}) {
 function CategoryTile({title, copy, image}) {
   return (
     <a
-      className="group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
+      className="bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
       href="/shop"
     >
       <img
@@ -217,7 +217,7 @@ function CategoryTile({title, copy, image}) {
 
 function InnerHero({title, eyebrow, image, children}) {
   return (
-    <section className="relative grid min-h-[500px] items-end overflow-hidden bg-[#101820] px-5 py-16 text-white md:px-20 md:py-24">
+    <section className="bc-shop-hero relative grid min-h-[500px] items-end overflow-hidden bg-[#101820] px-5 py-16 text-white md:px-20 md:py-24">
       <img
         alt=""
         className="absolute inset-0 h-full w-full scale-[1.01] object-cover"

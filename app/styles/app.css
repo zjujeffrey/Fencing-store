@@ -222,6 +222,101 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* BladeCraft shop page layout guard
+* --------------------------------------------------
+*/
+.bc-shop {
+  background: #f7f8fa;
+  color: #101820;
+  overflow-x: hidden;
+}
+
+.bc-shop .bc-shop-hero {
+  display: grid;
+  min-height: 500px;
+  padding: 4rem 1.25rem;
+}
+
+.bc-shop .bc-shop-hero h1,
+.bc-shop .bc-shop-catalog h2 {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.bc-shop .bc-shop-hero h1 {
+  color: #fff;
+  font-size: clamp(2.6rem, 7vw, 6rem);
+  line-height: 1;
+}
+
+.bc-shop .bc-shop-hero p {
+  margin: 0;
+}
+
+.bc-shop .bc-shop-catalog {
+  display: grid;
+  gap: 2rem;
+  background: #f7f8fa;
+  padding: 4rem 1.25rem;
+}
+
+.bc-shop .bc-shop-sidebar {
+  height: auto;
+  width: auto;
+  position: static;
+  right: auto;
+  top: auto;
+  box-shadow: none;
+  transform: none;
+}
+
+.bc-shop .bc-shop-catalog h2 {
+  color: #101820;
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 1;
+}
+
+.bc-shop .bc-shop-category-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.bc-shop .bc-shop-category-tile {
+  color: #fff;
+  min-height: 16rem;
+}
+
+.bc-shop .bc-shop-category-tile:hover {
+  text-decoration: none;
+}
+
+@media (min-width: 48rem) {
+  .bc-shop .bc-shop-hero {
+    padding: 6rem 5rem;
+  }
+
+  .bc-shop .bc-shop-catalog {
+    grid-template-columns: 220px minmax(0, 1fr);
+    padding: 6rem 3.5rem;
+  }
+
+  .bc-shop .bc-shop-sidebar {
+    position: sticky;
+    top: 7rem;
+    display: grid;
+    width: 220px;
+  }
+}
+
+@media (min-width: 64rem) {
+  .bc-shop .bc-shop-category-grid {
+    grid-template-columns: 1.2fr 1fr 1fr;
+  }
+}
+
+/*
+* --------------------------------------------------
 * components/Header
 * --------------------------------------------------
 */
