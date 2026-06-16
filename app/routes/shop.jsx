@@ -6,7 +6,11 @@ import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerMask from '~/assets/fencer-mask.jpg';
 import fencerWeapon from '~/assets/fencer-weapon.jpg';
 import gearBag from '~/assets/gear-bag.jpg';
-import {FENCING_CATEGORIES, getCategoryId} from '~/lib/fencingCategories';
+import {
+  FENCING_CATEGORIES,
+  getCategoryId,
+  getCollectionPath,
+} from '~/lib/fencingCategories';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
 
@@ -40,7 +44,7 @@ export default function Shop() {
           {FENCING_CATEGORIES.map((category) => (
               <a
                 className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
-                href={`#${category.id}`}
+                href={getCollectionPath(category)}
                 key={category.id}
               >
                 {category.label}
@@ -67,37 +71,37 @@ export default function Shop() {
             <CategoryTile
               title={FENCING_CATEGORIES[0].label}
               copy={FENCING_CATEGORIES[0].copy}
-              href={`#${FENCING_CATEGORIES[0].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[0])}
               image={fencerWeapon}
             />
             <CategoryTile
               title={FENCING_CATEGORIES[2].label}
               copy={FENCING_CATEGORIES[2].copy}
-              href={`#${FENCING_CATEGORIES[2].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[2])}
               image={fencerMask}
             />
             <CategoryTile
               title={FENCING_CATEGORIES[3].label}
               copy={FENCING_CATEGORIES[3].copy}
-              href={`#${FENCING_CATEGORIES[3].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[3])}
               image={fencerClothing}
             />
             <CategoryTile
               title={FENCING_CATEGORIES[5].label}
               copy={FENCING_CATEGORIES[5].copy}
-              href={`#${FENCING_CATEGORIES[5].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[5])}
               image={fencerWeapon}
             />
             <CategoryTile
               title={FENCING_CATEGORIES[6].label}
               copy={FENCING_CATEGORIES[6].copy}
-              href={`#${FENCING_CATEGORIES[6].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[6])}
               image={gearBag}
             />
             <CategoryTile
               title={FENCING_CATEGORIES[7].label}
               copy={FENCING_CATEGORIES[7].copy}
-              href={`#${FENCING_CATEGORIES[7].id}`}
+              href={getCollectionPath(FENCING_CATEGORIES[7])}
               image={fencerClothing}
             />
           </div>

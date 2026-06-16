@@ -2,7 +2,7 @@ import {Suspense} from 'react';
 import {Await, Link, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
-import {HEADER_CATEGORIES} from '~/lib/fencingCategories';
+import {getCollectionPath, HEADER_CATEGORIES} from '~/lib/fencingCategories';
 
 /**
  * @param {HeaderProps}
@@ -23,7 +23,7 @@ export function Header({isLoggedIn, cart}) {
             className="hover:text-[#c92337]"
             key={category.id}
             prefetch="intent"
-            to={`/shop#${category.id}`}
+            to={getCollectionPath(category)}
           >
             {category.label}
           </NavLink>
