@@ -135,7 +135,7 @@ export default function Product() {
 
   return (
     <main className="product-page grid gap-8 px-5 py-8 md:grid-cols-[1.05fr_.78fr] md:px-14 md:py-14">
-      <section className="grid gap-4">
+      <section className="min-w-0 grid gap-4">
         <ProductGallery
           fallbackImage={mainImage}
           images={galleryImages}
@@ -143,7 +143,7 @@ export default function Product() {
         />
       </section>
 
-      <section className="product-buy-panel self-start rounded-lg border border-[#d9e0e7] bg-white p-5 shadow-sm md:sticky md:top-28 md:p-6">
+      <section className="product-buy-panel min-w-0 self-start rounded-lg border border-[#d9e0e7] bg-white p-5 shadow-sm md:p-6">
         <p className="mb-3 flex flex-wrap gap-2 text-xs font-black uppercase text-[#61707f]">
           {productMeta.map((item) => (
             <span className="rounded bg-[#f7f8fa] px-2 py-1" key={item}>
@@ -210,7 +210,7 @@ export default function Product() {
         </div>
       </section>
 
-      <section className="md:col-span-2">
+      <section className="min-w-0 md:col-span-2">
         <ProductDetailsTabs
           descriptionHtml={proxiedDescriptionHtml}
           detailCopy={detailCopy}
