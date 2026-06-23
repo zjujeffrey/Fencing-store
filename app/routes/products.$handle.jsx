@@ -11,8 +11,6 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import fencerPair from '~/assets/fencer-pair.jpg';
-import fencerWeapon from '~/assets/fencer-weapon.jpg';
 
 /**
  * @type {Route.MetaFunction}
@@ -97,7 +95,7 @@ export default function Product() {
 
   // Sets the search param to the selected variant without navigation
   // only when no search params are set in the url
-  useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
+  useSelectedOptionInUrlParam(selectedVariant?.selectedOptions || []);
 
   // Get the product options array
   const productOptions = getProductOptions({
@@ -105,32 +103,53 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml, description, vendor} = product;
-  const detailCopy = description || 'Competition-ready equipment with verified Shopify variants and availability.';
+  const {
+    title,
+    descriptionHtml,
+    description,
+    vendor,
+    productType,
+    tags = [],
+    featuredImage,
+    media,
+    variants,
+  } = product;
+  const galleryImages = getGalleryImages({
+    selectedImage: selectedVariant?.image,
+    featuredImage,
+    mediaNodes: media?.nodes,
+  });
+  const mainImage = selectedVariant?.image || featuredImage || galleryImages[0];
+  const detailCopy =
+    description ||
+    product.seo?.description ||
+    'Competition-ready equipment with verified Shopify variants and availability.';
+  const hasDescriptionHtml = Boolean(descriptionHtml?.trim());
+  const variantNodes = variants?.nodes || [];
 
   return (
     <main className="grid gap-8 px-5 py-10 md:grid-cols-[1.08fr_.72fr] md:px-14 md:py-16">
       <section className="grid gap-4">
         <div className="overflow-hidden rounded-lg bg-[#d9e0e7]">
-          <ProductImage image={selectedVariant?.image} />
+          <ProductImage image={mainImage} />
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <img
-            alt=""
-            className="aspect-[4/3] w-full rounded-lg object-cover"
-            src={fencerWeapon}
-          />
-          <img
-            alt=""
-            className="aspect-[4/3] w-full rounded-lg object-cover"
-            src={fencerPair}
-          />
-        </div>
+        {galleryImages.length > 1 ? (
+          <div className="grid grid-cols-3 gap-3">
+            {galleryImages.slice(0, 6).map((image) => (
+              <img
+                alt={image.altText || title}
+                className="aspect-square w-full rounded-lg border border-[#d9e0e7] object-cover"
+                key={image.id || image.url}
+                src={image.url}
+              />
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <section className="self-start rounded-lg border border-[#d9e0e7] bg-white p-6 shadow-sm md:sticky md:top-28">
         <p className="mb-3 inline-flex rounded bg-[#c92337]/10 px-2 py-1 text-xs font-black uppercase text-[#c92337]">
-          {vendor || 'Shopify'}
+          {vendor || productType || 'Shopify'}
         </p>
         <h1 className="mb-4 text-[clamp(2.4rem,5vw,4.4rem)] font-black leading-none">
           {title}
@@ -151,6 +170,11 @@ export default function Product() {
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
+        <div className="mt-6 grid gap-2 text-sm text-[#61707f]">
+          {selectedVariant?.sku ? <p><strong>SKU:</strong> {selectedVariant.sku}</p> : null}
+          {productType ? <p><strong>Type:</strong> {productType}</p> : null}
+          {tags.length ? <p><strong>Tags:</strong> {tags.slice(0, 6).join(', ')}</p> : null}
+        </div>
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           {['Verified fit', 'Club ready', 'Secure checkout'].map((label) => (
             <div
@@ -166,15 +190,67 @@ export default function Product() {
 
       <section className="md:col-span-2">
         <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-          Details
+          Product details
         </p>
         <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
-          Protection with a clean competitive fit.
+          {product.seo?.title || title}
         </h2>
-        <div
-          className="mt-5 max-w-3xl leading-8 text-[#61707f]"
-          dangerouslySetInnerHTML={{__html: descriptionHtml}}
-        />
+        {hasDescriptionHtml ? (
+          <div
+            className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
+            dangerouslySetInnerHTML={{__html: descriptionHtml}}
+          />
+        ) : (
+          <p className="mt-5 max-w-4xl leading-8 text-[#61707f]">
+            {detailCopy}
+          </p>
+        )}
+      </section>
+
+      <section className="grid gap-4 md:col-span-2 md:grid-cols-3">
+        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
+          <h3 className="mb-3 text-lg font-black">Specifications</h3>
+          <dl className="grid gap-3 text-sm text-[#61707f]">
+            <div>
+              <dt className="font-black text-[#101820]">Vendor</dt>
+              <dd>{vendor || 'BladeCraft'}</dd>
+            </div>
+            <div>
+              <dt className="font-black text-[#101820]">Product type</dt>
+              <dd>{productType || 'Fencing equipment'}</dd>
+            </div>
+            <div>
+              <dt className="font-black text-[#101820]">Availability</dt>
+              <dd>{selectedVariant?.availableForSale ? 'Available' : 'Sold out'}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
+          <h3 className="mb-3 text-lg font-black">Shipping</h3>
+          <p className="leading-7 text-[#61707f]">
+            Orders are prepared after payment confirmation. Club and bulk orders
+            can be quoted separately before checkout.
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
+          <h3 className="mb-3 text-lg font-black">Variants</h3>
+          {variantNodes.length ? (
+            <ul className="grid gap-2 text-sm text-[#61707f]">
+              {variantNodes.slice(0, 8).map((variant) => (
+                <li className="flex justify-between gap-4" key={variant.id}>
+                  <span>{variant.title}</span>
+                  <span className="font-black text-[#101820]">
+                    <ProductPrice price={variant.price} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[#61707f]">No variant information available.</p>
+          )}
+        </div>
       </section>
       <Analytics.ProductView
         data={{
@@ -193,6 +269,21 @@ export default function Product() {
       />
     </main>
   );
+}
+
+function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
+  const images = [
+    selectedImage,
+    featuredImage,
+    ...(mediaNodes || [])
+      .filter((node) => node?.mediaContentType === 'IMAGE')
+      .map((node) => node.image || node.previewImage),
+  ].filter(Boolean);
+
+  return images.filter((image, index, allImages) => {
+    const key = image.url || image.id;
+    return key && allImages.findIndex((item) => (item.url || item.id) === key) === index;
+  });
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
@@ -238,8 +329,44 @@ const PRODUCT_FRAGMENT = `#graphql
     title
     vendor
     handle
+    productType
+    tags
     descriptionHtml
     description
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+    media(first: 12) {
+      nodes {
+        mediaContentType
+        alt
+        previewImage {
+          id
+          url
+          altText
+          width
+          height
+        }
+        ... on MediaImage {
+          image {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+    variants(first: 20) {
+      nodes {
+        ...ProductVariant
+      }
+    }
     encodedVariantExistence
     encodedVariantAvailability
     options {

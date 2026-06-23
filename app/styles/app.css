@@ -608,8 +608,22 @@ button.reset:hover:not(:has(> *)) {
   width: 100%;
 }
 
+.product-image-placeholder {
+  align-items: center;
+  aspect-ratio: 5 / 4;
+  color: #61707f;
+  display: flex;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 330px;
+}
+
 @media (min-width: 45em) {
   .product-image img {
+    min-height: 430px;
+  }
+
+  .product-image-placeholder {
     min-height: 430px;
   }
 }
@@ -627,6 +641,16 @@ button.reset:hover:not(:has(> *)) {
 
 .product-price-on-sale s {
   opacity: 0.5;
+}
+
+.product-detail-copy img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+.product-detail-copy p {
+  margin: 0;
 }
 
 .product-options-grid {
