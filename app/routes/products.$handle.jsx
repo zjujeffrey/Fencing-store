@@ -125,6 +125,7 @@ export default function Product() {
     product.seo?.description ||
     'Competition-ready equipment with verified Shopify variants and availability.';
   const hasDescriptionHtml = Boolean(descriptionHtml?.trim());
+  const hasUnsupportedDetailImages = hasExternalMarketImages(descriptionHtml);
   const variantNodes = variants?.nodes || [];
 
   return (
@@ -192,14 +193,25 @@ export default function Product() {
         <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
           Product details
         </p>
-        <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
+        <h2 className="product-detail-title max-w-4xl font-black leading-tight">
           {product.seo?.title || title}
         </h2>
-        {hasDescriptionHtml ? (
+        {hasDescriptionHtml && !hasUnsupportedDetailImages ? (
           <div
             className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
             dangerouslySetInnerHTML={{__html: descriptionHtml}}
           />
+        ) : galleryImages.length ? (
+          <div className="product-detail-gallery mt-6 grid gap-4 md:grid-cols-2">
+            {galleryImages.map((image) => (
+              <img
+                alt={image.altText || title}
+                className="w-full rounded-lg border border-[#d9e0e7] bg-[#f7f8fa] object-contain"
+                key={image.id || image.url}
+                src={image.url}
+              />
+            ))}
+          </div>
         ) : (
           <p className="mt-5 max-w-4xl leading-8 text-[#61707f]">
             {detailCopy}
@@ -291,6 +303,12 @@ function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
     const key = image.url || image.id;
     return key && allImages.findIndex((item) => (item.url || item.id) === key) === index;
   });
+}
+
+function hasExternalMarketImages(html) {
+  return /<img[^>]+src=["']https?:\/\/[^"']*(alicdn|taobao|tbcdn)[^"']*["']/i.test(
+    html || '',
+  );
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql

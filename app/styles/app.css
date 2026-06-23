@@ -649,8 +649,23 @@ button.reset:hover:not(:has(> *)) {
   max-width: 100%;
 }
 
+.product-detail-title {
+  font-size: clamp(1.75rem, 8vw, 3rem);
+  overflow-wrap: anywhere;
+}
+
 .product-detail-copy p {
   margin: 0;
+}
+
+.product-detail-gallery img {
+  max-height: 52rem;
+}
+
+@media (min-width: 45em) {
+  .product-detail-title {
+    font-size: clamp(2.25rem, 4vw, 4.2rem);
+  }
 }
 
 .product-variant-list {
