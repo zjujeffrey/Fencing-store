@@ -618,6 +618,32 @@ button.reset:hover:not(:has(> *)) {
   min-height: 330px;
 }
 
+.product-gallery-thumbs {
+  scrollbar-width: thin;
+}
+
+.product-gallery-thumb {
+  aspect-ratio: 1;
+  background: #fff;
+  border: 2px solid #d9e0e7;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  flex: 0 0 5.5rem;
+  overflow: hidden;
+  padding: 0;
+}
+
+.product-gallery-thumb.active,
+.product-gallery-thumb[aria-pressed='true'] {
+  border-color: #c92337;
+}
+
+.product-gallery-thumb img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
 @media (min-width: 45em) {
   .product-image img {
     min-height: 430px;
@@ -625,6 +651,10 @@ button.reset:hover:not(:has(> *)) {
 
   .product-image-placeholder {
     min-height: 430px;
+  }
+
+  .product-gallery-thumb {
+    flex-basis: 6.25rem;
   }
 }
 

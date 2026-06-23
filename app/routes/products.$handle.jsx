@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import {useLoaderData} from 'react-router';
 import {
   getSelectedProductOptions,
@@ -131,21 +132,11 @@ export default function Product() {
   return (
     <main className="grid gap-8 px-5 py-10 md:grid-cols-[1.08fr_.72fr] md:px-14 md:py-16">
       <section className="grid gap-4">
-        <div className="overflow-hidden rounded-lg bg-[#d9e0e7]">
-          <ProductImage image={mainImage} />
-        </div>
-        {galleryImages.length > 1 ? (
-          <div className="grid grid-cols-3 gap-3">
-            {galleryImages.slice(0, 6).map((image) => (
-              <img
-                alt={image.altText || title}
-                className="aspect-square w-full rounded-lg border border-[#d9e0e7] object-cover"
-                key={image.id || image.url}
-                src={image.url}
-              />
-            ))}
-          </div>
-        ) : null}
+        <ProductGallery
+          fallbackImage={mainImage}
+          images={galleryImages}
+          title={title}
+        />
       </section>
 
       <section className="self-start rounded-lg border border-[#d9e0e7] bg-white p-6 shadow-sm md:sticky md:top-28">
@@ -290,6 +281,44 @@ export default function Product() {
   );
 }
 
+function ProductGallery({fallbackImage, images, title}) {
+  const galleryImages = images.length ? images : fallbackImage ? [fallbackImage] : [];
+  const firstImage = fallbackImage || galleryImages[0];
+  const [activeImage, setActiveImage] = useState(firstImage);
+
+  useEffect(() => {
+    setActiveImage(firstImage);
+  }, [firstImage]);
+
+  return (
+    <div className="product-gallery grid gap-4">
+      <div className="overflow-hidden rounded-lg bg-[#d9e0e7]">
+        <ProductImage image={activeImage} />
+      </div>
+      {galleryImages.length > 1 ? (
+        <div className="product-gallery-thumbs flex gap-3 overflow-x-auto pb-1">
+          {galleryImages.map((image, index) => {
+            const isActive = getImageKey(image) === getImageKey(activeImage);
+
+            return (
+              <button
+                aria-label={`View ${title} image ${index + 1}`}
+                aria-pressed={isActive}
+                className={`product-gallery-thumb${isActive ? ' active' : ''}`}
+                key={getImageKey(image)}
+                onClick={() => setActiveImage(image)}
+                type="button"
+              >
+                <img alt={image.altText || title} src={image.url} />
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
   const images = [
     selectedImage,
@@ -303,6 +332,10 @@ function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
     const key = image.url || image.id;
     return key && allImages.findIndex((item) => (item.url || item.id) === key) === index;
   });
+}
+
+function getImageKey(image) {
+  return image?.id || image?.url || '';
 }
 
 function rewriteDescriptionImageUrls(html) {
