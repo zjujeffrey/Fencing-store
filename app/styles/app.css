@@ -644,6 +644,28 @@ button.reset:hover:not(:has(> *)) {
   width: 100%;
 }
 
+.product-assurance {
+  align-items: center;
+  border: 1px solid #d9e0e7;
+  border-radius: 0.5rem;
+  display: grid;
+  gap: 0.45rem;
+  min-height: 5.5rem;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.product-assurance span {
+  color: #0a7c86;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.product-assurance strong {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
 @media (min-width: 45em) {
   .product-image img {
     min-height: 430px;
@@ -692,9 +714,76 @@ button.reset:hover:not(:has(> *)) {
   max-height: 52rem;
 }
 
+.product-info-tabs {
+  border-top: 1px solid #d9e0e7;
+}
+
+.product-info-tablist {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+
+.product-info-tab {
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: #61707f;
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 900;
+  min-height: 3.5rem;
+  padding: 0 1.2rem;
+  text-transform: uppercase;
+}
+
+.product-info-tab[aria-selected='true'] {
+  border-bottom-color: #c92337;
+  color: #101820;
+}
+
+.product-info-panel {
+  background: #fff;
+  border-bottom: 1px solid #d9e0e7;
+  min-height: 18rem;
+  padding: 2rem 0;
+}
+
+.product-spec-table {
+  border: 1px solid #d9e0e7;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.product-spec-table div {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.product-spec-table div + div {
+  border-top: 1px solid #d9e0e7;
+}
+
+.product-spec-table dt {
+  color: #101820;
+  font-weight: 900;
+}
+
+.product-spec-table dd {
+  color: #61707f;
+  margin: 0;
+}
+
 @media (min-width: 45em) {
   .product-detail-title {
     font-size: clamp(2.25rem, 4vw, 4.2rem);
+  }
+
+  .product-spec-table div {
+    grid-template-columns: 14rem 1fr;
   }
 }
 

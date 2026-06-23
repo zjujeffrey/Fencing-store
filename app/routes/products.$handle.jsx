@@ -125,12 +125,16 @@ export default function Product() {
     description ||
     product.seo?.description ||
     'Competition-ready equipment with verified Shopify variants and availability.';
-  const hasDescriptionHtml = Boolean(descriptionHtml?.trim());
   const proxiedDescriptionHtml = rewriteDescriptionImageUrls(descriptionHtml);
   const variantNodes = variants?.nodes || [];
+  const productMeta = [
+    vendor,
+    productType,
+    selectedVariant?.sku ? `SKU ${selectedVariant.sku}` : null,
+  ].filter(Boolean);
 
   return (
-    <main className="grid gap-8 px-5 py-10 md:grid-cols-[1.08fr_.72fr] md:px-14 md:py-16">
+    <main className="product-page grid gap-8 px-5 py-8 md:grid-cols-[1.05fr_.78fr] md:px-14 md:py-14">
       <section className="grid gap-4">
         <ProductGallery
           fallbackImage={mainImage}
@@ -139,129 +143,89 @@ export default function Product() {
         />
       </section>
 
-      <section className="self-start rounded-lg border border-[#d9e0e7] bg-white p-6 shadow-sm md:sticky md:top-28">
-        <p className="mb-3 inline-flex rounded bg-[#c92337]/10 px-2 py-1 text-xs font-black uppercase text-[#c92337]">
-          {vendor || productType || 'Shopify'}
+      <section className="product-buy-panel self-start rounded-lg border border-[#d9e0e7] bg-white p-5 shadow-sm md:sticky md:top-28 md:p-6">
+        <p className="mb-3 flex flex-wrap gap-2 text-xs font-black uppercase text-[#61707f]">
+          {productMeta.map((item) => (
+            <span className="rounded bg-[#f7f8fa] px-2 py-1" key={item}>
+              {item}
+            </span>
+          ))}
         </p>
-        <h1 className="mb-4 text-[clamp(2.4rem,5vw,4.4rem)] font-black leading-none">
+        <h1 className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-black leading-none">
           {title}
         </h1>
-        <p className="leading-7 text-[#61707f]">{detailCopy}</p>
-        <div className="my-6 flex items-center justify-between gap-4 border-y border-[#d9e0e7] py-5">
-          <strong className="text-3xl">
+        <p className="max-w-2xl leading-7 text-[#61707f]">{detailCopy}</p>
+
+        <div className="my-6 grid gap-4 border-y border-[#d9e0e7] py-5 sm:grid-cols-[1fr_auto] sm:items-center">
+          <strong className="text-3xl leading-none">
             <ProductPrice
               price={selectedVariant?.price}
               compareAtPrice={selectedVariant?.compareAtPrice}
             />
           </strong>
-          <span className="font-bold text-[#61707f]">
-            Ships in 1-2 business days
+          <span className={`inline-flex min-h-9 items-center justify-center rounded px-3 text-sm font-black ${
+            selectedVariant?.availableForSale
+              ? 'bg-[#0a7c86]/10 text-[#0a7c86]'
+              : 'bg-[#c92337]/10 text-[#c92337]'
+          }`}>
+            {selectedVariant?.availableForSale ? 'In stock' : 'Sold out'}
           </span>
         </div>
+
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <div className="mt-6 grid gap-2 text-sm text-[#61707f]">
-          {selectedVariant?.sku ? <p><strong>SKU:</strong> {selectedVariant.sku}</p> : null}
-          {productType ? <p><strong>Type:</strong> {productType}</p> : null}
-          {tags.length ? <p><strong>Tags:</strong> {tags.slice(0, 6).join(', ')}</p> : null}
-        </div>
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
-          {['Verified fit', 'Club ready', 'Secure checkout'].map((label) => (
-            <div
-              className="grid min-h-24 place-items-center rounded-lg border border-[#d9e0e7] p-3 text-center text-xs font-black"
-              key={label}
-            >
-              <span className="text-2xl text-[#0a7c86]">◆</span>
-              <span>{label}</span>
+
+        <dl className="mt-6 grid gap-3 border-t border-[#d9e0e7] pt-5 text-sm">
+          {selectedVariant?.sku ? (
+            <div className="flex justify-between gap-4">
+              <dt className="font-black text-[#101820]">SKU</dt>
+              <dd className="text-right text-[#61707f]">{selectedVariant.sku}</dd>
+            </div>
+          ) : null}
+          <div className="flex justify-between gap-4">
+            <dt className="font-black text-[#101820]">Dispatch</dt>
+            <dd className="text-right text-[#61707f]">Ships in 1-2 business days</dd>
+          </div>
+          {productType ? (
+            <div className="flex justify-between gap-4">
+              <dt className="font-black text-[#101820]">Type</dt>
+              <dd className="text-right text-[#61707f]">{productType}</dd>
+            </div>
+          ) : null}
+        </dl>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            'FIE sourcing',
+            'Club orders',
+            'Secure checkout',
+          ].map((label) => (
+            <div className="product-assurance" key={label}>
+              <span aria-hidden="true">◆</span>
+              <strong>{label}</strong>
             </div>
           ))}
         </div>
       </section>
 
       <section className="md:col-span-2">
-        <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-          Product details
-        </p>
-        <h2 className="product-detail-title max-w-4xl font-black leading-tight">
-          {product.seo?.title || title}
-        </h2>
-        {hasDescriptionHtml ? (
-          <div
-            className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
-            dangerouslySetInnerHTML={{__html: proxiedDescriptionHtml}}
-          />
-        ) : galleryImages.length ? (
-          <div className="product-detail-gallery mt-6 grid gap-4 md:grid-cols-2">
-            {galleryImages.map((image) => (
-              <img
-                alt={image.altText || title}
-                className="w-full rounded-lg border border-[#d9e0e7] bg-[#f7f8fa] object-contain"
-                key={image.id || image.url}
-                src={image.url}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-5 max-w-4xl leading-8 text-[#61707f]">
-            {detailCopy}
-          </p>
-        )}
+        <ProductDetailsTabs
+          descriptionHtml={proxiedDescriptionHtml}
+          detailCopy={detailCopy}
+          galleryImages={galleryImages}
+          product={{
+            title,
+            vendor,
+            productType,
+            tags,
+          }}
+          selectedVariant={selectedVariant}
+          variantNodes={variantNodes}
+        />
       </section>
 
-      <section className="grid gap-4 md:col-span-2 md:grid-cols-3">
-        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
-          <h3 className="mb-3 text-lg font-black">Specifications</h3>
-          <dl className="grid gap-3 text-sm text-[#61707f]">
-            <div>
-              <dt className="font-black text-[#101820]">Vendor</dt>
-              <dd>{vendor || 'BladeCraft'}</dd>
-            </div>
-            <div>
-              <dt className="font-black text-[#101820]">Product type</dt>
-              <dd>{productType || 'Fencing equipment'}</dd>
-            </div>
-            <div>
-              <dt className="font-black text-[#101820]">Availability</dt>
-              <dd>{selectedVariant?.availableForSale ? 'Available' : 'Sold out'}</dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
-          <h3 className="mb-3 text-lg font-black">Shipping</h3>
-          <p className="leading-7 text-[#61707f]">
-            Orders are prepared after payment confirmation. Club and bulk orders
-            can be quoted separately before checkout.
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h3 className="text-lg font-black">Variants</h3>
-            {variantNodes.length ? (
-              <span className="rounded bg-[#f7f8fa] px-2 py-1 text-xs font-black text-[#61707f]">
-                {variantNodes.length}
-              </span>
-            ) : null}
-          </div>
-          {variantNodes.length ? (
-            <ul className="product-variant-list grid gap-2 text-sm text-[#61707f]">
-              {variantNodes.map((variant) => (
-                <li className="flex justify-between gap-4" key={variant.id}>
-                  <span>{variant.title}</span>
-                  <span className="font-black text-[#101820]">
-                    <ProductPrice price={variant.price} />
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-[#61707f]">No variant information available.</p>
-          )}
-        </div>
-      </section>
       <Analytics.ProductView
         data={{
           products: [
@@ -278,6 +242,183 @@ export default function Product() {
         }}
       />
     </main>
+  );
+}
+
+function ProductDetailsTabs({
+  descriptionHtml,
+  detailCopy,
+  galleryImages,
+  product,
+  selectedVariant,
+  variantNodes,
+}) {
+  const tabs = [
+    {id: 'description', label: 'Description'},
+    {id: 'specifications', label: 'Specifications'},
+    {id: 'sizing', label: 'Sizing & care'},
+    {id: 'shipping', label: 'Shipping'},
+    {id: 'variants', label: `Variants (${variantNodes.length})`},
+  ];
+  const [activeTab, setActiveTab] = useState(tabs[0].id);
+
+  return (
+    <div className="product-info-tabs">
+      <div className="product-info-tablist" role="tablist" aria-label="Product information">
+        {tabs.map((tab) => (
+          <button
+            aria-controls={`product-tab-${tab.id}`}
+            aria-selected={activeTab === tab.id}
+            className="product-info-tab"
+            id={`product-tab-button-${tab.id}`}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            role="tab"
+            type="button"
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="product-info-panel" id={`product-tab-${activeTab}`} role="tabpanel">
+        {activeTab === 'description' ? (
+          <ProductDescription
+            descriptionHtml={descriptionHtml}
+            detailCopy={detailCopy}
+            galleryImages={galleryImages}
+            title={product.title}
+          />
+        ) : null}
+
+        {activeTab === 'specifications' ? (
+          <ProductSpecifications
+            product={product}
+            selectedVariant={selectedVariant}
+          />
+        ) : null}
+
+        {activeTab === 'sizing' ? <SizingAndCare /> : null}
+
+        {activeTab === 'shipping' ? <ShippingPanel /> : null}
+
+        {activeTab === 'variants' ? <VariantList variantNodes={variantNodes} /> : null}
+      </div>
+    </div>
+  );
+}
+
+function ProductDescription({descriptionHtml, detailCopy, galleryImages, title}) {
+  if (descriptionHtml) {
+    return (
+      <>
+        <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
+          Product details
+        </p>
+        <h2 className="product-detail-title max-w-4xl font-black leading-tight">
+          {title}
+        </h2>
+        <div
+          className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
+          dangerouslySetInnerHTML={{__html: descriptionHtml}}
+        />
+      </>
+    );
+  }
+
+  if (galleryImages.length) {
+    return (
+      <div className="product-detail-gallery grid gap-4 md:grid-cols-2">
+        {galleryImages.map((image) => (
+          <img
+            alt={image.altText || title}
+            className="w-full rounded-lg border border-[#d9e0e7] bg-[#f7f8fa] object-contain"
+            key={image.id || image.url}
+            src={image.url}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return <p className="max-w-4xl leading-8 text-[#61707f]">{detailCopy}</p>;
+}
+
+function ProductSpecifications({product, selectedVariant}) {
+  const rows = [
+    ['Brand', product.vendor || 'BladeCraft'],
+    ['Product type', product.productType || 'Fencing equipment'],
+    ['SKU', selectedVariant?.sku || 'Pending'],
+    ['Availability', selectedVariant?.availableForSale ? 'Available' : 'Sold out'],
+    ['Tags', product.tags?.length ? product.tags.join(', ') : 'Not specified'],
+  ];
+
+  return (
+    <dl className="product-spec-table">
+      {rows.map(([label, value]) => (
+        <div key={label}>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function SizingAndCare() {
+  return (
+    <div className="grid gap-5 leading-7 text-[#61707f] md:grid-cols-2">
+      <div>
+        <h3 className="mb-2 text-lg font-black text-[#101820]">Sizing</h3>
+        <p>
+          Confirm height, weight, dominant hand, and competition category before
+          checkout. Club orders can be checked size-by-size before fulfillment.
+        </p>
+      </div>
+      <div>
+        <h3 className="mb-2 text-lg font-black text-[#101820]">Care</h3>
+        <p>
+          Follow the garment label. Keep masks and weapons dry after use, and
+          inspect cords, seams, and protective layers before competition.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ShippingPanel() {
+  return (
+    <div className="grid gap-5 leading-7 text-[#61707f] md:grid-cols-3">
+      {[
+        ['Dispatch', 'Most available items ship in 1-2 business days after payment confirmation.'],
+        ['Club orders', 'Bulk orders can be quoted and confirmed before checkout.'],
+        ['Returns', 'Return eligibility depends on product condition, sizing, and customization.'],
+      ].map(([title, copy]) => (
+        <div key={title}>
+          <h3 className="mb-2 text-lg font-black text-[#101820]">{title}</h3>
+          <p>{copy}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VariantList({variantNodes}) {
+  if (!variantNodes.length) {
+    return <p className="text-[#61707f]">No variant information available.</p>;
+  }
+
+  return (
+    <ul className="product-variant-list grid gap-2 text-sm text-[#61707f]">
+      {variantNodes.map((variant) => (
+        <li className="flex justify-between gap-4" key={variant.id}>
+          <span>{variant.title}</span>
+          <span className="font-black text-[#101820]">
+            <ProductPrice price={variant.price} />
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
