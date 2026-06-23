@@ -1376,42 +1376,45 @@ export type PredictiveSearchQuery = {
   }>;
 };
 
-export type ShopProductsQueryVariables = StorefrontAPI.Exact<{
+export type ShopCollectionsQueryVariables = StorefrontAPI.Exact<{
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
 }>;
 
-export type ShopProductsQuery = {
-  products: {
+export type ShopCollectionsQuery = {
+  collections: {
     nodes: Array<
       Pick<
-        StorefrontAPI.Product,
-        | 'id'
-        | 'title'
-        | 'handle'
-        | 'vendor'
-        | 'productType'
-        | 'tags'
-        | 'description'
+        StorefrontAPI.Collection,
+        'id' | 'title' | 'handle' | 'description'
       > & {
-        featuredImage?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.Image, 'url' | 'altText'>
-        >;
-        priceRange: {
-          minVariantPrice: Pick<
-            StorefrontAPI.MoneyV2,
-            'amount' | 'currencyCode'
+        products: {
+          nodes: Array<
+            Pick<
+              StorefrontAPI.Product,
+              'id' | 'title' | 'handle' | 'vendor' | 'description'
+            > & {
+              featuredImage?: StorefrontAPI.Maybe<
+                Pick<StorefrontAPI.Image, 'url' | 'altText'>
+              >;
+              priceRange: {
+                minVariantPrice: Pick<
+                  StorefrontAPI.MoneyV2,
+                  'amount' | 'currencyCode'
+                >;
+              };
+              selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
+                Pick<
+                  StorefrontAPI.ProductVariant,
+                  'id' | 'availableForSale' | 'title'
+                > & {
+                  price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
+                  product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
+                }
+              >;
+            }
           >;
         };
-        selectedOrFirstAvailableVariant?: StorefrontAPI.Maybe<
-          Pick<
-            StorefrontAPI.ProductVariant,
-            'id' | 'availableForSale' | 'title'
-          > & {
-            price: Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>;
-            product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
-          }
-        >;
       }
     >;
   };
@@ -1482,9 +1485,9 @@ interface GeneratedQueryTypes {
     return: PredictiveSearchQuery;
     variables: PredictiveSearchQueryVariables;
   };
-  '#graphql\n  query ShopProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 24, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        vendor\n        productType\n        tags\n        description\n        featuredImage {\n          url\n          altText\n        }\n        priceRange {\n          minVariantPrice {\n            amount\n            currencyCode\n          }\n        }\n        selectedOrFirstAvailableVariant {\n          id\n          availableForSale\n          title\n          price {\n            amount\n            currencyCode\n          }\n          product {\n            title\n            handle\n          }\n        }\n      }\n    }\n  }\n': {
-    return: ShopProductsQuery;
-    variables: ShopProductsQueryVariables;
+  '#graphql\n  query ShopCollections($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    collections(first: 50, sortKey: TITLE) {\n      nodes {\n        id\n        title\n        handle\n        description\n        products(first: 50, sortKey: TITLE) {\n          nodes {\n            id\n            title\n            handle\n            vendor\n            description\n            featuredImage {\n              url\n              altText\n            }\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            selectedOrFirstAvailableVariant {\n              id\n              availableForSale\n              title\n              price {\n                amount\n                currencyCode\n              }\n              product {\n                title\n                handle\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+    return: ShopCollectionsQuery;
+    variables: ShopCollectionsQueryVariables;
   };
 }
 

@@ -6,23 +6,23 @@ import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerMask from '~/assets/fencer-mask.jpg';
 import fencerWeapon from '~/assets/fencer-weapon.jpg';
 import gearBag from '~/assets/gear-bag.jpg';
-import {FENCING_CATEGORIES, getCategoryId} from '~/lib/fencingCategories';
+import {FENCING_CATEGORIES} from '~/lib/fencingCategories';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
 
 export async function loader({context}) {
-  const products = context.storefront
-    .query(SHOP_PRODUCTS_QUERY)
+  const collections = context.storefront
+    .query(SHOP_COLLECTIONS_QUERY)
     .catch((error) => {
       console.error(error);
       return null;
     });
 
-  return {products};
+  return {collections};
 }
 
 export default function Shop() {
-  const {products} = useLoaderData();
+  const {collections} = useLoaderData();
 
   return (
     <main className="bc-shop">
@@ -35,101 +35,132 @@ export default function Shop() {
         entry-level bundles for foil, epee, and sabre.
       </InnerHero>
 
-      <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
-        <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
-          {FENCING_CATEGORIES.map((category) => (
-              <a
-                className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
-                href={`#${category.id}`}
-                key={category.id}
-              >
-                {category.label}
-              </a>
-            ))}
-        </aside>
-
-        <div className="bc-shop-content">
-          <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-                Featured categories
-              </p>
-              <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
-                Built for practice, tournaments, and club rooms.
-              </h2>
-            </div>
-            <Button to="/club" variant="outline">
-              Club quote
-            </Button>
-          </div>
-
-          <div className="bc-shop-category-grid mb-8 grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
-            <CategoryTile
-              title={FENCING_CATEGORIES[0].label}
-              copy={FENCING_CATEGORIES[0].copy}
-              href={`#${FENCING_CATEGORIES[0].id}`}
-              image={fencerWeapon}
-            />
-            <CategoryTile
-              title={FENCING_CATEGORIES[2].label}
-              copy={FENCING_CATEGORIES[2].copy}
-              href={`#${FENCING_CATEGORIES[2].id}`}
-              image={fencerMask}
-            />
-            <CategoryTile
-              title={FENCING_CATEGORIES[3].label}
-              copy={FENCING_CATEGORIES[3].copy}
-              href={`#${FENCING_CATEGORIES[3].id}`}
-              image={fencerClothing}
-            />
-            <CategoryTile
-              title={FENCING_CATEGORIES[5].label}
-              copy={FENCING_CATEGORIES[5].copy}
-              href={`#${FENCING_CATEGORIES[5].id}`}
-              image={fencerWeapon}
-            />
-            <CategoryTile
-              title={FENCING_CATEGORIES[6].label}
-              copy={FENCING_CATEGORIES[6].copy}
-              href={`#${FENCING_CATEGORIES[6].id}`}
-              image={gearBag}
-            />
-            <CategoryTile
-              title={FENCING_CATEGORIES[7].label}
-              copy={FENCING_CATEGORIES[7].copy}
-              href={`#${FENCING_CATEGORIES[7].id}`}
-              image={fencerClothing}
-            />
-          </div>
-
-          <Suspense fallback={<p>Loading Shopify products...</p>}>
-            <Await resolve={products}>
-              {(response) => (
-                <ProductGrid products={response?.products?.nodes || []} />
-              )}
-            </Await>
-          </Suspense>
-        </div>
-      </section>
+      <Suspense fallback={<CatalogLoading />}>
+        <Await resolve={collections}>
+          {(response) => (
+            <ShopCatalog collections={response?.collections?.nodes || []} />
+          )}
+        </Await>
+      </Suspense>
     </main>
   );
 }
 
-function ProductGrid({products}) {
-  if (!products.length) {
+function ShopCatalog({collections}) {
+  const populatedCollections = orderCollections(
+    collections.filter((collection) => collection.products.nodes.length),
+  );
+
+  if (!populatedCollections.length) {
     return (
-      <div className="rounded-lg border border-[#d9e0e7] bg-white p-6">
-        No published Shopify products were found.
-      </div>
+      <section className="px-5 py-16 md:px-14 md:py-24">
+        <div className="rounded-lg border border-[#d9e0e7] bg-white p-6">
+          No published Shopify collections were found.
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+    <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
+      <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
+        {populatedCollections.map((collection) => (
+          <a
+            className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
+            href={`#${collection.handle}`}
+            key={collection.id}
+          >
+            {collection.title}
+            <span className="ml-2 text-xs text-[#8b98a5]">
+              {collection.products.nodes.length}
+            </span>
+          </a>
+        ))}
+      </aside>
+
+      <div className="bc-shop-content min-w-0">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
+              Shopify collections
+            </p>
+            <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
+              Built for practice, tournaments, and club rooms.
+            </h2>
+          </div>
+          <Button to="/club" variant="outline">
+            Club quote
+          </Button>
+        </div>
+
+        <FeaturedCollections collections={populatedCollections} />
+
+        <div className="grid gap-16">
+          {populatedCollections.map((collection) => (
+            <CollectionSection collection={collection} key={collection.id} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedCollections({collections}) {
+  const featured = collections.slice(0, 6);
+
+  return (
+    <div className="bc-shop-category-grid mb-14 grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr]">
+      {featured.map((collection) => {
+        const category = getCategory(collection);
+
+        return (
+          <CategoryTile
+            title={collection.title}
+            copy={collection.description || category?.copy || 'Explore the collection'}
+            href={`#${collection.handle}`}
+            image={getCategoryImage(category?.id)}
+            key={collection.id}
+          />
+        );
+      })}
     </div>
+  );
+}
+
+function CollectionSection({collection}) {
+  return (
+    <section
+      className="scroll-mt-28 border-t border-[#d9e0e7] pt-8"
+      id={collection.handle}
+    >
+      <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p className="mb-2 text-xs font-black uppercase text-[#c92337]">
+            {collection.products.nodes.length} products
+          </p>
+          <h2 className="text-[clamp(1.8rem,3vw,3rem)] font-black leading-none">
+            {collection.title}
+          </h2>
+          {collection.description ? (
+            <p className="mt-3 max-w-3xl leading-7 text-[#61707f]">
+              {collection.description}
+            </p>
+          ) : null}
+        </div>
+        <Link
+          className="font-black text-[#0a7c86] hover:text-[#c92337]"
+          to={`/collections/${collection.handle}`}
+        >
+          View collection
+        </Link>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {collection.products.nodes.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -137,10 +168,7 @@ function ProductCard({product}) {
   const selectedVariant = product.selectedOrFirstAvailableVariant;
 
   return (
-    <article
-      className="overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm"
-      id={getCategoryId(product)}
-    >
+    <article className="min-w-0 overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm">
       <Link
         className="group block aspect-[4/3] overflow-hidden bg-[#d9e0e7]"
         to={`/products/${product.handle}`}
@@ -235,6 +263,50 @@ function CategoryTile({title, copy, href, image}) {
   );
 }
 
+function CatalogLoading() {
+  return (
+    <section className="px-5 py-16 md:px-14 md:py-24">
+      <p className="font-black text-[#61707f]">Loading Shopify collections...</p>
+    </section>
+  );
+}
+
+function orderCollections(collections) {
+  const categoryOrder = new Map(
+    FENCING_CATEGORIES.map((category, index) => [category.id, index]),
+  );
+
+  return [...collections].sort((left, right) => {
+    const leftOrder = categoryOrder.get(getCategory(left)?.id) ?? 999;
+    const rightOrder = categoryOrder.get(getCategory(right)?.id) ?? 999;
+
+    return leftOrder - rightOrder || left.title.localeCompare(right.title);
+  });
+}
+
+function getCategory(collection) {
+  const normalizedTitle = collection.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return FENCING_CATEGORIES.find(
+    (category) =>
+      category.id === collection.handle ||
+      category.id === normalizedTitle ||
+      category.label.toLowerCase() === collection.title.toLowerCase(),
+  );
+}
+
+function getCategoryImage(categoryId) {
+  if (categoryId === 'masks') return fencerMask;
+  if (categoryId === 'clothing' || categoryId === 'starter-kits') {
+    return fencerClothing;
+  }
+  if (categoryId === 'bags') return gearBag;
+  return fencerWeapon;
+}
+
 function InnerHero({title, eyebrow, image, children}) {
   return (
     <section className="bc-shop-hero relative grid min-h-[500px] items-end overflow-hidden bg-[#101820] px-5 py-16 text-white md:px-20 md:py-24">
@@ -282,39 +354,45 @@ function formatPrice(price) {
   }).format(Number(price.amount));
 }
 
-const SHOP_PRODUCTS_QUERY = `#graphql
-  query ShopProducts($country: CountryCode, $language: LanguageCode)
+const SHOP_COLLECTIONS_QUERY = `#graphql
+  query ShopCollections($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 24, sortKey: UPDATED_AT, reverse: true) {
+    collections(first: 50, sortKey: TITLE) {
       nodes {
         id
         title
         handle
-        vendor
-        productType
-        tags
         description
-        featuredImage {
-          url
-          altText
-        }
-        priceRange {
-          minVariantPrice {
-            amount
-            currencyCode
-          }
-        }
-        selectedOrFirstAvailableVariant {
-          id
-          availableForSale
-          title
-          price {
-            amount
-            currencyCode
-          }
-          product {
+        products(first: 50, sortKey: TITLE) {
+          nodes {
+            id
             title
             handle
+            vendor
+            description
+            featuredImage {
+              url
+              altText
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            selectedOrFirstAvailableVariant {
+              id
+              availableForSale
+              title
+              price {
+                amount
+                currencyCode
+              }
+              product {
+                title
+                handle
+              }
+            }
           }
         }
       }
