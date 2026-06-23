@@ -235,10 +235,17 @@ export default function Product() {
         </div>
 
         <div className="rounded-lg border border-[#d9e0e7] bg-white p-5">
-          <h3 className="mb-3 text-lg font-black">Variants</h3>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h3 className="text-lg font-black">Variants</h3>
+            {variantNodes.length ? (
+              <span className="rounded bg-[#f7f8fa] px-2 py-1 text-xs font-black text-[#61707f]">
+                {variantNodes.length}
+              </span>
+            ) : null}
+          </div>
           {variantNodes.length ? (
-            <ul className="grid gap-2 text-sm text-[#61707f]">
-              {variantNodes.slice(0, 8).map((variant) => (
+            <ul className="product-variant-list grid gap-2 text-sm text-[#61707f]">
+              {variantNodes.map((variant) => (
                 <li className="flex justify-between gap-4" key={variant.id}>
                   <span>{variant.title}</span>
                   <span className="font-black text-[#101820]">
@@ -362,7 +369,7 @@ const PRODUCT_FRAGMENT = `#graphql
         }
       }
     }
-    variants(first: 20) {
+    variants(first: 250) {
       nodes {
         ...ProductVariant
       }

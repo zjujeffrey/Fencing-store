@@ -653,6 +653,12 @@ button.reset:hover:not(:has(> *)) {
   margin: 0;
 }
 
+.product-variant-list {
+  max-height: 26rem;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
 .product-options-grid {
   display: flex;
   flex-wrap: wrap;
