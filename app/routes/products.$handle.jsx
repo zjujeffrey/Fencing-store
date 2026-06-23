@@ -125,7 +125,7 @@ export default function Product() {
     product.seo?.description ||
     'Competition-ready equipment with verified Shopify variants and availability.';
   const hasDescriptionHtml = Boolean(descriptionHtml?.trim());
-  const hasUnsupportedDetailImages = hasExternalMarketImages(descriptionHtml);
+  const proxiedDescriptionHtml = rewriteDescriptionImageUrls(descriptionHtml);
   const variantNodes = variants?.nodes || [];
 
   return (
@@ -196,10 +196,10 @@ export default function Product() {
         <h2 className="product-detail-title max-w-4xl font-black leading-tight">
           {product.seo?.title || title}
         </h2>
-        {hasDescriptionHtml && !hasUnsupportedDetailImages ? (
+        {hasDescriptionHtml ? (
           <div
             className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
-            dangerouslySetInnerHTML={{__html: descriptionHtml}}
+            dangerouslySetInnerHTML={{__html: proxiedDescriptionHtml}}
           />
         ) : galleryImages.length ? (
           <div className="product-detail-gallery mt-6 grid gap-4 md:grid-cols-2">
@@ -305,10 +305,28 @@ function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
   });
 }
 
-function hasExternalMarketImages(html) {
-  return /<img[^>]+src=["']https?:\/\/[^"']*(alicdn|taobao|tbcdn)[^"']*["']/i.test(
-    html || '',
+function rewriteDescriptionImageUrls(html) {
+  if (!html) return '';
+
+  return html.replace(
+    /(<img\b[^>]*?\bsrc=)(["'])(https?:\/\/[^"']+)(\2)/gi,
+    (match, prefix, quote, sourceUrl, suffix) => {
+      if (!shouldProxyImageUrl(sourceUrl)) return match;
+
+      return `${prefix}${quote}/api/image-proxy?url=${encodeURIComponent(
+        sourceUrl,
+      )}${suffix}`;
+    },
   );
+}
+
+function shouldProxyImageUrl(sourceUrl) {
+  try {
+    const url = new URL(sourceUrl);
+    return /(^|\.)((alicdn|taobao|tbcdn)\.com|alicdn\.com)$/i.test(url.hostname);
+  } catch {
+    return false;
+  }
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
