@@ -314,11 +314,8 @@ function ProductDescription({descriptionHtml, detailCopy, galleryImages, title})
         <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
           Product details
         </p>
-        <h2 className="product-detail-title max-w-4xl font-black leading-tight">
-          {title}
-        </h2>
         <div
-          className="product-detail-copy mt-5 max-w-4xl leading-8 text-[#61707f]"
+          className="product-detail-copy max-w-4xl leading-8 text-[#61707f]"
           dangerouslySetInnerHTML={{__html: descriptionHtml}}
         />
       </>
