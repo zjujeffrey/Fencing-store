@@ -116,11 +116,10 @@ export default function Product() {
     variants,
   } = product;
   const galleryImages = getGalleryImages({
-    selectedImage: selectedVariant?.image,
-    featuredImage,
     mediaNodes: media?.nodes,
   });
-  const mainImage = selectedVariant?.image || featuredImage || galleryImages[0];
+  const mainImage =
+    galleryImages[0] || featuredImage || selectedVariant?.image;
   const detailCopy =
     description ||
     product.seo?.description ||
@@ -456,14 +455,12 @@ function ProductGallery({fallbackImage, images, title}) {
   );
 }
 
-function getGalleryImages({selectedImage, featuredImage, mediaNodes}) {
-  const images = [
-    selectedImage,
-    featuredImage,
-    ...(mediaNodes || [])
-      .filter((node) => node?.mediaContentType === 'IMAGE')
-      .map((node) => node.image || node.previewImage),
-  ].filter(Boolean);
+function getGalleryImages({mediaNodes}) {
+  const images = (mediaNodes || [])
+    .filter((node) => node?.mediaContentType === 'IMAGE')
+    .map((node) => node.image || node.previewImage)
+    .filter(Boolean)
+    .slice(0, 6);
 
   return images.filter((image, index, allImages) => {
     const key = image.url || image.id;
@@ -553,7 +550,7 @@ const PRODUCT_FRAGMENT = `#graphql
       width
       height
     }
-    media(first: 12) {
+    media(first: 6) {
       nodes {
         mediaContentType
         alt
