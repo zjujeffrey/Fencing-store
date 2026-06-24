@@ -119,7 +119,7 @@ export default function Product() {
     mediaNodes: media?.nodes,
   });
   const mainImage =
-    galleryImages[0] || featuredImage || selectedVariant?.image;
+    selectedVariant?.image || galleryImages[0] || featuredImage;
   const detailCopy =
     description ||
     product.seo?.description ||
@@ -469,7 +469,7 @@ function getGalleryImages({mediaNodes}) {
 }
 
 function getImageKey(image) {
-  return image?.id || image?.url || '';
+  return image?.url || image?.id || '';
 }
 
 function rewriteDescriptionImageUrls(html) {
