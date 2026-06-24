@@ -235,9 +235,6 @@ function ProductCard({product}) {
             {product.title}
           </Link>
         </h3>
-        <p className="min-h-12 text-sm leading-6 text-[#61707f]">
-          {product.description || 'View variants and availability.'}
-        </p>
         <div className="mt-5 flex items-center justify-between gap-4">
           <strong className="text-xl">
             {formatPrice(product.priceRange.minVariantPrice)}
@@ -422,7 +419,6 @@ const SHOP_COLLECTIONS_QUERY = `#graphql
             title
             handle
             vendor
-            description
             featuredImage {
               url
               altText

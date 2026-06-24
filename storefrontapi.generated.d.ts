@@ -1392,7 +1392,7 @@ export type ShopCollectionsQuery = {
           nodes: Array<
             Pick<
               StorefrontAPI.Product,
-              'id' | 'title' | 'handle' | 'vendor' | 'description'
+              'id' | 'title' | 'handle' | 'vendor'
             > & {
               featuredImage?: StorefrontAPI.Maybe<
                 Pick<StorefrontAPI.Image, 'url' | 'altText'>
@@ -1485,7 +1485,7 @@ interface GeneratedQueryTypes {
     return: PredictiveSearchQuery;
     variables: PredictiveSearchQueryVariables;
   };
-  '#graphql\n  query ShopCollections($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    collections(first: 50, sortKey: TITLE) {\n      nodes {\n        id\n        title\n        handle\n        description\n        products(first: 50, sortKey: TITLE) {\n          nodes {\n            id\n            title\n            handle\n            vendor\n            description\n            featuredImage {\n              url\n              altText\n            }\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            selectedOrFirstAvailableVariant {\n              id\n              availableForSale\n              title\n              price {\n                amount\n                currencyCode\n              }\n              product {\n                title\n                handle\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query ShopCollections($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    collections(first: 50, sortKey: TITLE) {\n      nodes {\n        id\n        title\n        handle\n        description\n        products(first: 50, sortKey: TITLE) {\n          nodes {\n            id\n            title\n            handle\n            vendor\n            featuredImage {\n              url\n              altText\n            }\n            priceRange {\n              minVariantPrice {\n                amount\n                currencyCode\n              }\n            }\n            selectedOrFirstAvailableVariant {\n              id\n              availableForSale\n              title\n              price {\n                amount\n                currencyCode\n              }\n              product {\n                title\n                handle\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: ShopCollectionsQuery;
     variables: ShopCollectionsQueryVariables;
   };
