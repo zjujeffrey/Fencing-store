@@ -8,7 +8,7 @@ import {ProductItem} from '~/components/ProductItem';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  return [{title: `${data?.collection.title ?? 'Collection'} | Bladecraft`}];
 };
 
 /**
@@ -76,21 +76,44 @@ export default function Collection() {
   const {collection} = useLoaderData();
 
   return (
-    <div className="collection">
-      <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
-      <PaginatedResourceSection
-        connection={collection.products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        )}
-      </PaginatedResourceSection>
+    <div className="bc-collection-page">
+      <header className="bc-page-hero">
+        <p className="bc-eyebrow">Bladecraft equipment</p>
+        <h1>{collection.title}</h1>
+        <p>
+          {collection.description ||
+            'Purpose-selected equipment for training, competition, and the long work between them.'}
+        </p>
+      </header>
+      <section className="bc-collection-guide">
+        <p className="bc-eyebrow">How to choose</p>
+        <h2>Start with fit, standard, and how often you fence.</h2>
+        <p>
+          Choose equipment for your current weapon and competition level. When
+          two options meet the same safety standard, prioritize fit and the
+          details you will feel every week in training.
+        </p>
+      </section>
+      <section className="bc-catalog">
+        <div className="bc-section-heading">
+          <div>
+            <p className="bc-eyebrow">Shop the collection</p>
+            <h2>{collection.title}</h2>
+          </div>
+        </div>
+        <PaginatedResourceSection
+          connection={collection.products}
+          resourcesClassName="products-grid"
+        >
+          {({node: product, index}) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              loading={index < 8 ? 'eager' : undefined}
+            />
+          )}
+        </PaginatedResourceSection>
+      </section>
       <Analytics.CollectionView
         data={{
           collection: {

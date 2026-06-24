@@ -5,7 +5,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.page.title ?? ''}`}];
+  return [{title: `${data?.page.title ?? 'Page'} | Bladecraft`}];
 };
 
 /**
@@ -66,11 +66,16 @@ export default function Page() {
   const {page} = useLoaderData();
 
   return (
-    <div className="page">
-      <header>
+    <div className="bc-content-page">
+      <header className="bc-page-hero">
+        <p className="bc-eyebrow">Bladecraft field guide</p>
         <h1>{page.title}</h1>
+        {page.seo?.description ? <p>{page.seo.description}</p> : null}
       </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      <main
+        className="bc-prose"
+        dangerouslySetInnerHTML={{__html: page.body}}
+      />
     </div>
   );
 }

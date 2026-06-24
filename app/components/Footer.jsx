@@ -1,38 +1,64 @@
 import {NavLink} from 'react-router';
 
-/**
- * @param {FooterProps}
- */
+const footerGroups = [
+  {
+    title: 'Shop',
+    links: [
+      ['All equipment', '/collections/all'],
+      ['Foil', '/shop?category=foil'],
+      ['Epee', '/shop?category=epee'],
+      ['Sabre', '/shop?category=sabre'],
+    ],
+  },
+  {
+    title: 'Support',
+    links: [
+      ['Sizing', '/pages/sizing'],
+      ['Contact', '/pages/contact'],
+      ['FAQ', '/pages/faq'],
+      ['Cart', '/cart'],
+    ],
+  },
+  {
+    title: 'Programs',
+    links: [
+      ['Club orders', '/club'],
+      ['Starter kits', '/shop?category=starter-kits'],
+      ['Account', '/account'],
+      ['Journal', '/blogs/journal'],
+    ],
+  },
+];
+
 export function Footer() {
   return (
-    <footer className="flex flex-col justify-between gap-7 border-t border-[#d9e0e7] bg-white px-5 py-10 md:flex-row md:px-14">
-      <div>
-        <NavLink className="inline-flex items-center gap-3 font-black" to="/">
-          <span className="grid h-10 w-10 place-items-center rounded-md bg-[#c92337] text-xs text-white">
-            BC
-          </span>
-          <span>BladeCraft</span>
-        </NavLink>
-        <p className="mt-4 max-w-sm text-[#61707f]">
-          Independent fencing supply for athletes, clubs, and coaches.
-        </p>
+    <footer className="bc-footer">
+      <div className="bc-footer-main">
+        <div className="bc-footer-brand">
+          <NavLink to="/">BLADECRAFT</NavLink>
+          <p>
+            Performance fencing equipment for athletes, coaches, clubs, and
+            programs.
+          </p>
+        </div>
+        {footerGroups.map((group) => (
+          <nav key={group.title}>
+            <h2>{group.title}</h2>
+            {group.links.map(([label, to]) => (
+              <NavLink key={label} to={to}>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        ))}
       </div>
-      <nav className="flex flex-wrap gap-5 font-black">
-        <NavLink to="/shop">Shop</NavLink>
-        <NavLink to="/collections/all">Catalog</NavLink>
-        <NavLink to="/club">Club Orders</NavLink>
-        <NavLink to="/cart">Cart</NavLink>
-      </nav>
+      <div className="bc-footer-bottom">
+        <span>© {new Date().getFullYear()} Bladecraft</span>
+        <div>
+          <NavLink to="/policies">Policies</NavLink>
+          <NavLink to="/pages/contact">Contact</NavLink>
+        </div>
+      </div>
     </footer>
   );
 }
-
-/**
- * @typedef {Object} FooterProps
- * @property {Promise<FooterQuery|null>} footer
- * @property {HeaderQuery} header
- * @property {string} publicStoreDomain
- */
-
-/** @typedef {import('storefrontapi.generated').FooterQuery} FooterQuery */
-/** @typedef {import('storefrontapi.generated').HeaderQuery} HeaderQuery */

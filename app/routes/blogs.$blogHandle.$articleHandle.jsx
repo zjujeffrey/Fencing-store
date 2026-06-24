@@ -6,7 +6,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.article.title ?? ''} article`}];
+  return [{title: `${data?.article.title ?? 'Journal'} | Bladecraft`}];
 };
 
 /**
@@ -84,21 +84,24 @@ export default function Article() {
   }).format(new Date(article.publishedAt));
 
   return (
-    <div className="article">
-      <h1>
+    <article className="article bc-article">
+      <header>
+        <p className="bc-eyebrow">Bladecraft journal</p>
+        <h1>
         {title}
-        <div>
+        </h1>
+        <div className="bc-article-meta">
           <time dateTime={article.publishedAt}>{publishedDate}</time> &middot;{' '}
           <address>{author?.name}</address>
         </div>
-      </h1>
+      </header>
 
       {image && <Image data={image} sizes="90vw" loading="eager" />}
       <div
         dangerouslySetInnerHTML={{__html: contentHtml}}
-        className="article"
+        className="bc-prose"
       />
-    </div>
+    </article>
   );
 }
 

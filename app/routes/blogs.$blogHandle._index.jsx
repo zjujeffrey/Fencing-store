@@ -7,7 +7,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
-  return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];
+  return [{title: `${data?.blog.title ?? 'Journal'} | Bladecraft`}];
 };
 
 /**
@@ -72,8 +72,12 @@ export default function Blog() {
   const {articles} = blog;
 
   return (
-    <div className="blog">
-      <h1>{blog.title}</h1>
+    <div className="blog bc-blog">
+      <header className="bc-page-hero">
+        <p className="bc-eyebrow">Notes from the equipment room</p>
+        <h1>{blog.title}</h1>
+        <p>Buying guides, care notes, competition standards, and club advice.</p>
+      </header>
       <div className="blog-grid">
         <PaginatedResourceSection connection={articles}>
           {({node: article, index}) => (

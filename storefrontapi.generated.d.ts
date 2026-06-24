@@ -392,7 +392,7 @@ export type FeaturedProductsQueryVariables = StorefrontAPI.Exact<{
 export type FeaturedProductsQuery = {
   products: {
     nodes: Array<
-      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle' | 'vendor'> & {
+      Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
         featuredImage?: StorefrontAPI.Maybe<
           Pick<StorefrontAPI.Image, 'url' | 'altText'>
         >;
@@ -1433,7 +1433,7 @@ interface GeneratedQueryTypes {
     return: StoreRobotsQuery;
     variables: StoreRobotsQueryVariables;
   };
-  '#graphql\n  query FeaturedProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 4, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        vendor\n        featuredImage {\n          url\n          altText\n        }\n        priceRange {\n          minVariantPrice {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query FeaturedProducts($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    products(first: 4, sortKey: UPDATED_AT, reverse: true) {\n      nodes {\n        id\n        title\n        handle\n        featuredImage {\n          url\n          altText\n        }\n        priceRange {\n          minVariantPrice {\n            amount\n            currencyCode\n          }\n        }\n      }\n    }\n  }\n': {
     return: FeaturedProductsQuery;
     variables: FeaturedProductsQueryVariables;
   };

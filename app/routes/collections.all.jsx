@@ -7,7 +7,7 @@ import {ProductItem} from '~/components/ProductItem';
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: `Hydrogen | Products`}];
+  return [{title: 'All Fencing Equipment | Bladecraft'}];
 };
 
 /**
@@ -58,20 +58,35 @@ export default function Collection() {
   const {products} = useLoaderData();
 
   return (
-    <div className="collection">
-      <h1>Products</h1>
-      <PaginatedResourceSection
-        connection={products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        )}
-      </PaginatedResourceSection>
+    <div className="bc-collection-page">
+      <header className="bc-page-hero">
+        <p className="bc-eyebrow">The full equipment room</p>
+        <h1>All fencing equipment.</h1>
+        <p>
+          Browse Bladecraft gear for foil, epee, sabre, clubs, and first-season
+          kits.
+        </p>
+      </header>
+      <section className="bc-catalog">
+        <div className="bc-section-heading">
+          <div>
+            <p className="bc-eyebrow">Full catalog</p>
+            <h2>Choose your next piece of kit.</h2>
+          </div>
+        </div>
+        <PaginatedResourceSection
+          connection={products}
+          resourcesClassName="products-grid"
+        >
+          {({node: product, index}) => (
+            <ProductItem
+              key={product.id}
+              product={product}
+              loading={index < 8 ? 'eager' : undefined}
+            />
+          )}
+        </PaginatedResourceSection>
+      </section>
     </div>
   );
 }
