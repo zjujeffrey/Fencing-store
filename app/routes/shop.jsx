@@ -65,16 +65,16 @@ function ShopCatalog({collections}) {
     <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
       <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
         {populatedCollections.map((collection) => (
-          <a
+          <Link
             className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
-            href={`#${collection.handle}`}
+            to={`/collections/${collection.handle}`}
             key={collection.id}
           >
             {collection.title}
             <span className="ml-2 text-xs text-[#8b98a5]">
               {collection.products.nodes.length}
             </span>
-          </a>
+          </Link>
         ))}
       </aside>
 
@@ -117,7 +117,7 @@ function FeaturedCollections({collections}) {
           <CategoryTile
             title={collection.title}
             copy={collection.description || category?.copy || 'Explore the collection'}
-            href={`#${collection.handle}`}
+            href={`/collections/${collection.handle}`}
             image={getCategoryImage(category?.id)}
             key={collection.id}
           />
@@ -243,9 +243,9 @@ function CardAddButton({product, selectedVariant}) {
 
 function CategoryTile({title, copy, href, image}) {
   return (
-    <a
+    <Link
       className="bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
-      href={href}
+      to={href}
     >
       <img
         alt=""
@@ -259,7 +259,7 @@ function CategoryTile({title, copy, href, image}) {
       <strong className="relative max-w-sm text-2xl leading-tight">
         {copy}
       </strong>
-    </a>
+    </Link>
   );
 }
 

@@ -23,7 +23,7 @@ export function Header({isLoggedIn, cart}) {
             className="hover:text-[#c92337]"
             key={category.id}
             prefetch="intent"
-            to={`/shop#${category.id}`}
+            to={`/collections/${category.id}`}
           >
             {category.label}
           </NavLink>
