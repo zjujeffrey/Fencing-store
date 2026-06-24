@@ -2,10 +2,14 @@ import {Await, Link, useLoaderData, useSearchParams} from 'react-router';
 import {Suspense} from 'react';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
-import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerMask from '~/assets/fencer-mask.jpg';
 import fencerWeapon from '~/assets/fencer-weapon.jpg';
-import gearBag from '~/assets/gear-bag.jpg';
+import categoryBags from '~/assets/category-bags.jpg';
+import categoryClothing from '~/assets/category-clothing.jpg';
+import categoryMasks from '~/assets/category-masks.jpg';
+import categoryScoring from '~/assets/category-scoring.jpg';
+import categoryStarterKits from '~/assets/category-starter-kits.jpg';
+import categoryWeapons from '~/assets/category-weapons.jpg';
 import {FENCING_CATEGORIES} from '~/lib/fencingCategories';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
@@ -337,12 +341,19 @@ function getCategory(collection) {
 }
 
 function getCategoryImage(categoryId) {
-  if (categoryId === 'masks') return fencerMask;
-  if (categoryId === 'clothing' || categoryId === 'starter-kits') {
-    return fencerClothing;
-  }
-  if (categoryId === 'bags') return gearBag;
-  return fencerWeapon;
+  const categoryImages = {
+    weapons: categoryWeapons,
+    blades: categoryWeapons,
+    masks: categoryMasks,
+    clothing: categoryClothing,
+    protective: categoryClothing,
+    scoring: categoryScoring,
+    bags: categoryBags,
+    'starter-kits': categoryStarterKits,
+    parts: categoryScoring,
+  };
+
+  return categoryImages[categoryId] || categoryWeapons;
 }
 
 function getShopCategoryUrl(handle) {
