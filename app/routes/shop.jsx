@@ -32,33 +32,63 @@ export default function Shop() {
 
   return (
     <main className="bc-shop">
-      <InnerHero
-        title="Shop the full fencing kit."
-        eyebrow="Equipment catalog"
-        image={fencerWeapon}
-      >
-        Find competition masks, whites, weapons, bags, scoring sets, and
-        entry-level bundles for foil, epee, and sabre.
-      </InnerHero>
-
-      <Suspense fallback={<CatalogLoading />}>
+      <Suspense fallback={<ShopLoading />}>
         <Await resolve={collections}>
-          {(response) => (
-            <ShopCatalog
-              collections={response?.collections?.nodes || []}
-              selectedCategory={selectedCategory}
-            />
-          )}
+          {(response) => {
+            const collectionNodes = response?.collections?.nodes || [];
+
+            return (
+              <ShopExperience
+                collections={collectionNodes}
+                selectedCategory={selectedCategory}
+              />
+            );
+          }}
         </Await>
       </Suspense>
     </main>
   );
 }
 
-function ShopCatalog({collections, selectedCategory}) {
+function ShopExperience({collections, selectedCategory}) {
   const populatedCollections = orderCollections(
     collections.filter((collection) => collection.products.nodes.length),
   );
+  const activeCollection = populatedCollections.find(
+    (collection) => collection.handle === selectedCategory,
+  );
+  const activeCategory = activeCollection
+    ? getCategory(activeCollection)
+    : null;
+
+  return (
+    <>
+      <InnerHero
+        title={activeCollection?.title || 'Shop the full fencing kit.'}
+        eyebrow={activeCollection ? 'Equipment collection' : 'Equipment catalog'}
+        image={
+          activeCollection
+            ? getCategoryImage(activeCategory?.id)
+            : fencerWeapon
+        }
+      >
+        {activeCollection
+          ? activeCollection.description ||
+            activeCategory?.copy ||
+            'Competition-ready fencing equipment selected for this category.'
+          : 'Find competition masks, whites, weapons, bags, scoring sets, and entry-level bundles for foil, epee, and sabre.'}
+      </InnerHero>
+
+      <ShopCatalog
+        collections={populatedCollections}
+        selectedCategory={selectedCategory}
+      />
+    </>
+  );
+}
+
+function ShopCatalog({collections, selectedCategory}) {
+  const populatedCollections = collections;
   const activeCollection = populatedCollections.find(
     (collection) => collection.handle === selectedCategory,
   );
@@ -108,26 +138,31 @@ function ShopCatalog({collections, selectedCategory}) {
       </aside>
 
       <div className="bc-shop-content min-w-0">
-        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-              {activeCollection ? 'Selected collection' : 'Shopify collections'}
+        <div className={`flex flex-col justify-between gap-6 md:flex-row md:items-end ${
+          activeCollection ? 'mb-6' : 'mb-8'
+        }`}>
+          {!activeCollection ? (
+            <div>
+              <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
+                Shopify collections
+              </p>
+              <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
+                Built for practice, tournaments, and club rooms.
+              </h2>
+            </div>
+          ) : (
+            <p className="text-sm font-black uppercase text-[#61707f]">
+              {activeCollection.products.nodes.length} products
             </p>
-            <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
-              {activeCollection
-                ? activeCollection.title
-                : 'Built for practice, tournaments, and club rooms.'}
-            </h2>
-          </div>
+          )}
           <Button to="/club" variant="outline">
             Club quote
           </Button>
         </div>
 
-        <FeaturedCollections
-          collections={populatedCollections}
-          selectedCategory={activeCollection?.handle}
-        />
+        {!activeCollection ? (
+          <FeaturedCollections collections={populatedCollections} />
+        ) : null}
 
         <div className="grid gap-16">
           {visibleCollections.map((collection) => (
@@ -143,7 +178,7 @@ function ShopCatalog({collections, selectedCategory}) {
   );
 }
 
-function FeaturedCollections({collections, selectedCategory}) {
+function FeaturedCollections({collections}) {
   const featured = collections.slice(0, 6);
 
   return (
@@ -157,7 +192,6 @@ function FeaturedCollections({collections, selectedCategory}) {
             copy={collection.description || category?.copy || 'Explore the collection'}
             href={getShopCategoryUrl(collection.handle)}
             image={getCategoryImage(category?.id)}
-            isActive={selectedCategory === collection.handle}
             key={collection.id}
           />
         );
@@ -172,20 +206,26 @@ function CollectionSection({collection, isFiltered}) {
       className="scroll-mt-28 border-t border-[#d9e0e7] pt-8"
       id={collection.handle}
     >
-      <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <p className="mb-2 text-xs font-black uppercase text-[#c92337]">
-            {collection.products.nodes.length} products
-          </p>
-          <h2 className="text-[clamp(1.8rem,3vw,3rem)] font-black leading-none">
-            {collection.title}
-          </h2>
-          {collection.description ? (
-            <p className="mt-3 max-w-3xl leading-7 text-[#61707f]">
-              {collection.description}
+      <div
+        className={`mb-6 flex flex-col gap-4 sm:flex-row sm:items-end ${
+          isFiltered ? 'sm:justify-end' : 'sm:justify-between'
+        }`}
+      >
+        {!isFiltered ? (
+          <div>
+            <p className="mb-2 text-xs font-black uppercase text-[#c92337]">
+              {collection.products.nodes.length} products
             </p>
-          ) : null}
-        </div>
+            <h2 className="text-[clamp(1.8rem,3vw,3rem)] font-black leading-none">
+              {collection.title}
+            </h2>
+            {collection.description ? (
+              <p className="mt-3 max-w-3xl leading-7 text-[#61707f]">
+                {collection.description}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         <Link
           className="font-black text-[#0a7c86] hover:text-[#c92337]"
           to={isFiltered ? '/shop' : getShopCategoryUrl(collection.handle)}
@@ -277,13 +317,10 @@ function CardAddButton({product, selectedVariant}) {
   );
 }
 
-function CategoryTile({title, copy, href, image, isActive}) {
+function CategoryTile({title, copy, href, image}) {
   return (
     <Link
-      aria-current={isActive ? 'page' : undefined}
-      className={`bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white ${
-        isActive ? 'ring-4 ring-[#c92337]' : ''
-      }`}
+      className="bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
       to={href}
     >
       <img
@@ -302,11 +339,23 @@ function CategoryTile({title, copy, href, image, isActive}) {
   );
 }
 
-function CatalogLoading() {
+function ShopLoading() {
   return (
-    <section className="px-5 py-16 md:px-14 md:py-24">
-      <p className="font-black text-[#61707f]">Loading Shopify collections...</p>
-    </section>
+    <>
+      <InnerHero
+        title="Shop the full fencing kit."
+        eyebrow="Equipment catalog"
+        image={fencerWeapon}
+      >
+        Find competition masks, whites, weapons, bags, scoring sets, and
+        entry-level bundles for foil, epee, and sabre.
+      </InnerHero>
+      <section className="px-5 py-16 md:px-14 md:py-24">
+        <p className="font-black text-[#61707f]">
+          Loading Shopify collections...
+        </p>
+      </section>
+    </>
   );
 }
 
