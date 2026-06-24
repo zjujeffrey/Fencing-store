@@ -1,4 +1,4 @@
-import {Await, Link, useLoaderData} from 'react-router';
+import {Await, Link, useLoaderData, useSearchParams} from 'react-router';
 import {Suspense} from 'react';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
@@ -23,6 +23,8 @@ export async function loader({context}) {
 
 export default function Shop() {
   const {collections} = useLoaderData();
+  const [searchParams] = useSearchParams();
+  const selectedCategory = searchParams.get('category');
 
   return (
     <main className="bc-shop">
@@ -38,7 +40,10 @@ export default function Shop() {
       <Suspense fallback={<CatalogLoading />}>
         <Await resolve={collections}>
           {(response) => (
-            <ShopCatalog collections={response?.collections?.nodes || []} />
+            <ShopCatalog
+              collections={response?.collections?.nodes || []}
+              selectedCategory={selectedCategory}
+            />
           )}
         </Await>
       </Suspense>
@@ -46,10 +51,16 @@ export default function Shop() {
   );
 }
 
-function ShopCatalog({collections}) {
+function ShopCatalog({collections, selectedCategory}) {
   const populatedCollections = orderCollections(
     collections.filter((collection) => collection.products.nodes.length),
   );
+  const activeCollection = populatedCollections.find(
+    (collection) => collection.handle === selectedCategory,
+  );
+  const visibleCollections = activeCollection
+    ? [activeCollection]
+    : populatedCollections;
 
   if (!populatedCollections.length) {
     return (
@@ -64,17 +75,31 @@ function ShopCatalog({collections}) {
   return (
     <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
       <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
+        <Link
+          className={`rounded-md px-3 py-3 font-black ${
+            activeCollection
+              ? 'text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]'
+              : 'bg-[#101820] text-white'
+          }`}
+          to="/shop"
+        >
+          All products
+        </Link>
         {populatedCollections.map((collection) => (
-          <a
-            className="rounded-md px-3 py-3 font-black text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]"
-            href={`#${collection.handle}`}
+          <Link
+            className={`rounded-md px-3 py-3 font-black ${
+              activeCollection?.handle === collection.handle
+                ? 'bg-[#101820] text-white'
+                : 'text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]'
+            }`}
+            to={getShopCategoryUrl(collection.handle)}
             key={collection.id}
           >
             {collection.title}
-            <span className="ml-2 text-xs text-[#8b98a5]">
+            <span className="ml-2 text-xs opacity-70">
               {collection.products.nodes.length}
             </span>
-          </a>
+          </Link>
         ))}
       </aside>
 
@@ -82,10 +107,12 @@ function ShopCatalog({collections}) {
         <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-              Shopify collections
+              {activeCollection ? 'Selected collection' : 'Shopify collections'}
             </p>
             <h2 className="max-w-4xl text-[clamp(2rem,4vw,4.2rem)] font-black leading-none">
-              Built for practice, tournaments, and club rooms.
+              {activeCollection
+                ? activeCollection.title
+                : 'Built for practice, tournaments, and club rooms.'}
             </h2>
           </div>
           <Button to="/club" variant="outline">
@@ -93,11 +120,18 @@ function ShopCatalog({collections}) {
           </Button>
         </div>
 
-        <FeaturedCollections collections={populatedCollections} />
+        <FeaturedCollections
+          collections={populatedCollections}
+          selectedCategory={activeCollection?.handle}
+        />
 
         <div className="grid gap-16">
-          {populatedCollections.map((collection) => (
-            <CollectionSection collection={collection} key={collection.id} />
+          {visibleCollections.map((collection) => (
+            <CollectionSection
+              collection={collection}
+              isFiltered={Boolean(activeCollection)}
+              key={collection.id}
+            />
           ))}
         </div>
       </div>
@@ -105,7 +139,7 @@ function ShopCatalog({collections}) {
   );
 }
 
-function FeaturedCollections({collections}) {
+function FeaturedCollections({collections, selectedCategory}) {
   const featured = collections.slice(0, 6);
 
   return (
@@ -117,8 +151,9 @@ function FeaturedCollections({collections}) {
           <CategoryTile
             title={collection.title}
             copy={collection.description || category?.copy || 'Explore the collection'}
-            href={`#${collection.handle}`}
+            href={getShopCategoryUrl(collection.handle)}
             image={getCategoryImage(category?.id)}
+            isActive={selectedCategory === collection.handle}
             key={collection.id}
           />
         );
@@ -127,7 +162,7 @@ function FeaturedCollections({collections}) {
   );
 }
 
-function CollectionSection({collection}) {
+function CollectionSection({collection, isFiltered}) {
   return (
     <section
       className="scroll-mt-28 border-t border-[#d9e0e7] pt-8"
@@ -149,9 +184,9 @@ function CollectionSection({collection}) {
         </div>
         <Link
           className="font-black text-[#0a7c86] hover:text-[#c92337]"
-          to={`/collections/${collection.handle}`}
+          to={isFiltered ? '/shop' : getShopCategoryUrl(collection.handle)}
         >
-          View collection
+          {isFiltered ? 'View all products' : `View only ${collection.title}`}
         </Link>
       </div>
 
@@ -241,11 +276,14 @@ function CardAddButton({product, selectedVariant}) {
   );
 }
 
-function CategoryTile({title, copy, href, image}) {
+function CategoryTile({title, copy, href, image, isActive}) {
   return (
-    <a
-      className="bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white"
-      href={href}
+    <Link
+      aria-current={isActive ? 'page' : undefined}
+      className={`bc-shop-category-tile group relative flex min-h-64 flex-col justify-end overflow-hidden rounded-lg p-6 text-white ${
+        isActive ? 'ring-4 ring-[#c92337]' : ''
+      }`}
+      to={href}
     >
       <img
         alt=""
@@ -259,7 +297,7 @@ function CategoryTile({title, copy, href, image}) {
       <strong className="relative max-w-sm text-2xl leading-tight">
         {copy}
       </strong>
-    </a>
+    </Link>
   );
 }
 
@@ -305,6 +343,10 @@ function getCategoryImage(categoryId) {
   }
   if (categoryId === 'bags') return gearBag;
   return fencerWeapon;
+}
+
+function getShopCategoryUrl(handle) {
+  return `/shop?category=${encodeURIComponent(handle)}`;
 }
 
 function InnerHero({title, eyebrow, image, children}) {
