@@ -154,7 +154,6 @@ export default function Product() {
         <h1 className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-black leading-none">
           {title}
         </h1>
-        <p className="max-w-2xl leading-7 text-[#61707f]">{detailCopy}</p>
 
         <div className="my-6 grid gap-4 border-y border-[#d9e0e7] py-5 sm:grid-cols-[1fr_auto] sm:items-center">
           <strong className="text-3xl leading-none">
