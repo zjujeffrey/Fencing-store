@@ -108,12 +108,10 @@ function ShopCatalog({collections, selectedCategory}) {
 
   return (
     <section className="bc-shop-catalog grid gap-8 px-5 py-16 md:grid-cols-[220px_1fr] md:px-14 md:py-24">
-      <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:sticky md:top-28 md:grid">
+      <aside className="bc-shop-sidebar hidden self-start rounded-lg border border-[#d9e0e7] bg-white p-3 md:grid">
         <Link
-          className={`rounded-md px-3 py-3 font-black ${
-            activeCollection
-              ? 'text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]'
-              : 'bg-[#101820] text-white'
+          className={`bc-shop-sidebar-link ${
+            activeCollection ? '' : 'active'
           }`}
           to="/shop"
         >
@@ -121,15 +119,15 @@ function ShopCatalog({collections, selectedCategory}) {
         </Link>
         {populatedCollections.map((collection) => (
           <Link
-            className={`rounded-md px-3 py-3 font-black ${
+            className={`bc-shop-sidebar-link ${
               activeCollection?.handle === collection.handle
-                ? 'bg-[#101820] text-white'
-                : 'text-[#61707f] hover:bg-[#f7f8fa] hover:text-[#101820]'
+                ? 'active'
+                : ''
             }`}
             to={getShopCategoryUrl(collection.handle)}
             key={collection.id}
           >
-            {collection.title}
+            {getCollectionLabel(collection)}
             <span className="ml-2 text-xs opacity-70">
               {collection.products.nodes.length}
             </span>
@@ -404,6 +402,10 @@ function getCategoryImage(categoryId) {
 
 function getShopCategoryUrl(handle) {
   return `/shop?category=${encodeURIComponent(handle)}`;
+}
+
+function getCollectionLabel(collection) {
+  return getCategory(collection)?.label || collection.title;
 }
 
 function InnerHero({title, eyebrow, image, children}) {

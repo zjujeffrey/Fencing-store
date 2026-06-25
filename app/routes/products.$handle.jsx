@@ -1,13 +1,16 @@
-import {useEffect, useState} from 'react';
-import {useLoaderData} from 'react-router';
+import {Suspense, useEffect, useState} from 'react';
+import {Await, Link, useLoaderData} from 'react-router';
 import {
   getSelectedProductOptions,
   Analytics,
+  Money,
   useOptimisticVariant,
   getProductOptions,
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
+import {AddToCartButton} from '~/components/AddToCartButton';
+import {useAside} from '~/components/Aside';
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
@@ -30,11 +33,9 @@ export const meta = ({data}) => {
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
+  const deferredData = loadDeferredData(args, criticalData.product.id);
 
   return {...deferredData, ...criticalData};
 }
@@ -77,16 +78,22 @@ async function loadCriticalData({context, params, request}) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  * @param {Route.LoaderArgs}
  */
-function loadDeferredData({context, params}) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
+function loadDeferredData({context}, productId) {
+  const recommendations = context.storefront
+    .query(PRODUCT_RECOMMENDATIONS_QUERY, {
+      variables: {productId},
+    })
+    .catch((error) => {
+      console.error(error);
+      return null;
+    });
 
-  return {};
+  return {recommendations};
 }
 
 export default function Product() {
   /** @type {LoaderReturnData} */
-  const {product} = useLoaderData();
+  const {product, recommendations} = useLoaderData();
 
   // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
@@ -134,12 +141,22 @@ export default function Product() {
 
   return (
     <main className="product-page grid gap-8 px-5 py-8 md:grid-cols-[1.05fr_.78fr] md:px-14 md:py-14">
-      <section className="min-w-0 grid gap-4">
+      <section className="product-gallery-column min-w-0">
         <ProductGallery
           fallbackImage={mainImage}
           images={galleryImages}
           title={title}
         />
+        <Suspense fallback={<RecommendationSkeleton />}>
+          <Await resolve={recommendations}>
+            {(data) => (
+              <ProductRecommendations
+                currentProductId={product.id}
+                products={data?.productRecommendations || []}
+              />
+            )}
+          </Await>
+        </Suspense>
       </section>
 
       <section className="product-buy-panel min-w-0 self-start rounded-lg border border-[#d9e0e7] bg-white p-5 shadow-sm md:p-6">
@@ -208,7 +225,7 @@ export default function Product() {
         </div>
       </section>
 
-      <section className="min-w-0 md:col-span-2">
+      <section className="product-details-section min-w-0 md:col-span-2">
         <ProductDetailsTabs
           descriptionHtml={proxiedDescriptionHtml}
           detailCopy={detailCopy}
@@ -240,6 +257,90 @@ export default function Product() {
         }}
       />
     </main>
+  );
+}
+
+function ProductRecommendations({currentProductId, products}) {
+  const {open} = useAside();
+  const recommendations = products
+    .filter((product) => product.id !== currentProductId)
+    .slice(0, 4);
+
+  if (!recommendations.length) return null;
+
+  return (
+    <section className="product-recommendations min-w-0">
+      <header>
+        <p className="bc-eyebrow">Complete your kit</p>
+        <h2>You might also need.</h2>
+      </header>
+      <div className="product-recommendation-grid">
+        {recommendations.map((product) => {
+          const variant = product.selectedOrFirstAvailableVariant;
+          const canQuickAdd =
+            variant?.availableForSale && product.variants?.nodes.length === 1;
+
+          return (
+            <article className="product-recommendation-card" key={product.id}>
+              <Link
+                className="product-recommendation-image"
+                to={`/products/${product.handle}`}
+              >
+                {product.featuredImage ? (
+                  <img
+                    alt={product.featuredImage.altText || product.title}
+                    loading="lazy"
+                    src={product.featuredImage.url}
+                  />
+                ) : null}
+              </Link>
+              <div className="product-recommendation-copy">
+                <Link to={`/products/${product.handle}`}>
+                  <h3>{product.title}</h3>
+                </Link>
+                <Money data={product.priceRange.minVariantPrice} />
+              </div>
+              {canQuickAdd ? (
+                <AddToCartButton
+                  analytics={{
+                    products: [
+                      {
+                        productGid: product.id,
+                        variantGid: variant.id,
+                        name: product.title,
+                        price: variant.price.amount,
+                        quantity: 1,
+                      },
+                    ],
+                  }}
+                  className="product-recommendation-action"
+                  lines={[{merchandiseId: variant.id, quantity: 1}]}
+                  onClick={() => open('cart')}
+                >
+                  Quick add
+                </AddToCartButton>
+              ) : (
+                <Link
+                  className="product-recommendation-action"
+                  to={`/products/${product.handle}`}
+                >
+                  Choose options
+                </Link>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RecommendationSkeleton() {
+  return (
+    <section
+      aria-hidden="true"
+      className="product-recommendations product-recommendations-loading"
+    />
   );
 }
 
@@ -427,12 +528,15 @@ function ProductGallery({fallbackImage, images, title}) {
   }, [firstImage]);
 
   return (
-    <div className="product-gallery grid gap-4">
-      <div className="overflow-hidden rounded-lg bg-[#d9e0e7]">
+    <div className="product-gallery">
+      <div className="product-gallery-stage">
         <ProductImage image={activeImage} />
       </div>
       {galleryImages.length > 1 ? (
-        <div className="product-gallery-thumbs flex gap-3 overflow-x-auto pb-1">
+        <div
+          aria-label={`${title} image gallery`}
+          className="product-gallery-thumbs"
+        >
           {galleryImages.map((image, index) => {
             const isActive = getImageKey(image) === getImageKey(activeImage);
 
@@ -622,6 +726,43 @@ const PRODUCT_QUERY = `#graphql
     }
   }
   ${PRODUCT_FRAGMENT}
+`;
+
+const PRODUCT_RECOMMENDATIONS_QUERY = `#graphql
+  query ProductRecommendations(
+    $country: CountryCode
+    $language: LanguageCode
+    $productId: ID!
+  ) @inContext(country: $country, language: $language) {
+    productRecommendations(productId: $productId, intent: RELATED) {
+      id
+      title
+      handle
+      featuredImage {
+        url
+        altText
+      }
+      variants(first: 2) {
+        nodes {
+          id
+        }
+      }
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      selectedOrFirstAvailableVariant {
+        id
+        availableForSale
+        price {
+          amount
+          currencyCode
+        }
+      }
+    }
+  }
 `;
 
 /** @typedef {import('./+types/products.$handle').Route} Route */

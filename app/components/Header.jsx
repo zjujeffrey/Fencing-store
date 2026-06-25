@@ -2,13 +2,13 @@ import {Suspense} from 'react';
 import {Await, Link, NavLink, useAsyncValue} from 'react-router';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
+import {HEADER_CATEGORIES} from '~/lib/fencingCategories';
 
 const navItems = [
-  ['Foil', '/shop?category=foil'],
-  ['Epee', '/shop?category=epee'],
-  ['Sabre', '/shop?category=sabre'],
-  ['Starter Kits', '/shop?category=starter-kits'],
-  ['Club Orders', '/club'],
+  ...HEADER_CATEGORIES.map((category) => [
+    category.label,
+    `/shop?category=${encodeURIComponent(category.id)}`,
+  ]),
   ['Sizing', '/pages/sizing'],
 ];
 
