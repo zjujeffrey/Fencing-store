@@ -97,7 +97,7 @@ export default function Homepage() {
         <img
           alt="Fencer preparing for competition"
           className="bc-home-hero-image"
-          src={fencerMask}
+          src={fencerWeapon}
         />
         <div className="bc-home-hero-shade" />
         <div className="bc-home-hero-copy">
