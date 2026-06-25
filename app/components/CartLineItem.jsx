@@ -3,6 +3,7 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from 'react-router';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {getProductDisplayTitle} from '~/lib/productPresentation';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -19,6 +20,7 @@ export function CartLineItem({layout, line, childrenMap}) {
   const {id, merchandise} = line;
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
+  const displayTitle = getProductDisplayTitle(product);
   const {close} = useAside();
   const lineItemChildren = childrenMap[id];
   const childrenLabelId = `cart-line-children-${id}`;
@@ -48,7 +50,7 @@ export function CartLineItem({layout, line, childrenMap}) {
             }}
           >
             <p>
-              <strong>{product.title}</strong>
+              <strong>{displayTitle}</strong>
             </p>
           </Link>
           <ProductPrice price={line?.cost?.totalAmount} />
@@ -68,7 +70,7 @@ export function CartLineItem({layout, line, childrenMap}) {
       {lineItemChildren ? (
         <div>
           <p id={childrenLabelId} className="sr-only">
-            Line items with {product.title}
+            Line items with {displayTitle}
           </p>
           <ul aria-labelledby={childrenLabelId} className="cart-line-children">
             {lineItemChildren.map((childLine) => (

@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams} from '~/lib/search';
+import {getProductDisplayTitle} from '~/lib/productPresentation';
 
 /**
  * @param {Omit<SearchResultsProps, 'error' | 'type'>}
@@ -111,10 +112,14 @@ function SearchResultsProducts({term, products}) {
               <div className="search-results-item" key={product.id}>
                 <Link prefetch="intent" to={productUrl}>
                   {image && (
-                    <Image data={image} alt={product.title} width={50} />
+                    <Image
+                      data={image}
+                      alt={getProductDisplayTitle(product)}
+                      width={50}
+                    />
                   )}
                   <div>
-                    <p>{product.title}</p>
+                    <p>{getProductDisplayTitle(product)}</p>
                     <small>{price && <Money data={price} />}</small>
                   </div>
                 </Link>

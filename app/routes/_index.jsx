@@ -6,6 +6,7 @@ import fencerWeapon from '~/assets/fencer-weapon.jpg';
 import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerScoring from '~/assets/fencer-scoring.jpg';
 import gearBag from '~/assets/gear-bag.jpg';
+import {getProductDisplayTitle} from '~/lib/productPresentation';
 
 export const meta = () => [
   {title: 'Bladecraft | Performance Fencing Equipment'},
@@ -297,6 +298,7 @@ function ProductGrid({products}) {
     <div className="bc-product-grid">
       {products.map((product) => {
         const price = product.priceRange.minVariantPrice;
+        const displayTitle = getProductDisplayTitle(product);
         return (
           <Link
             className="bc-product-card"
@@ -306,14 +308,14 @@ function ProductGrid({products}) {
             <div>
               {product.featuredImage ? (
                 <img
-                  alt={product.featuredImage.altText || product.title}
+                  alt={product.featuredImage.altText || displayTitle}
                   src={product.featuredImage.url}
                 />
               ) : (
                 <img alt="" src={fencerMask} />
               )}
             </div>
-            <h3>{product.title}</h3>
+            <h3>{displayTitle}</h3>
             <p>
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',

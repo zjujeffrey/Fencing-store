@@ -11,6 +11,10 @@ import categoryScoring from '~/assets/category-scoring.jpg';
 import categoryStarterKits from '~/assets/category-starter-kits.jpg';
 import categoryWeapons from '~/assets/category-weapons.jpg';
 import {FENCING_CATEGORIES} from '~/lib/fencingCategories';
+import {
+  getProductDisplayDescription,
+  getProductDisplayTitle,
+} from '~/lib/productPresentation';
 
 export const meta = () => [{title: 'Shop Fencing Gear | BladeCraft'}];
 
@@ -243,6 +247,8 @@ function CollectionSection({collection, isFiltered}) {
 
 function ProductCard({product}) {
   const selectedVariant = product.selectedOrFirstAvailableVariant;
+  const displayTitle = getProductDisplayTitle(product);
+  const displayDescription = getProductDisplayDescription(product);
 
   return (
     <article className="min-w-0 overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm">
@@ -252,7 +258,7 @@ function ProductCard({product}) {
       >
         {product.featuredImage ? (
           <img
-            alt={product.featuredImage.altText || product.title}
+            alt={product.featuredImage.altText || displayTitle}
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             src={product.featuredImage.url}
           />
@@ -270,9 +276,12 @@ function ProductCard({product}) {
         </p>
         <h3 className="mb-2 text-lg font-black">
           <Link className="hover:text-[#c92337]" to={`/products/${product.handle}`}>
-            {product.title}
+            {displayTitle}
           </Link>
         </h3>
+        {displayDescription ? (
+          <p className="shop-product-summary">{displayDescription}</p>
+        ) : null}
         <div className="mt-5 flex items-center justify-between gap-4">
           <strong className="text-xl">
             {formatPrice(product.priceRange.minVariantPrice)}

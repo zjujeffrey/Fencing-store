@@ -14,14 +14,19 @@ import {useAside} from '~/components/Aside';
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {
+  getProductDisplayDescription,
+  getProductDisplayTitle,
+} from '~/lib/productPresentation';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = ({data}) => {
+  const displayTitle = getProductDisplayTitle(data?.product);
   return [
-    {title: `${data?.product.title ?? 'Product'} | BladeCraft`},
+    {title: `${displayTitle} | BladeCraft`},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -122,15 +127,23 @@ export default function Product() {
     media,
     variants,
   } = product;
+  const displayTitle = getProductDisplayTitle(product);
+  const displayDescription = getProductDisplayDescription(product);
   const galleryImages = getGalleryImages({
     mediaNodes: media?.nodes,
   });
   const mainImage =
     selectedVariant?.image || galleryImages[0] || featuredImage;
+  const fallbackDescription = getFallbackProductDescription({
+    productType,
+    title,
+  });
   const detailCopy =
     description ||
+    displayDescription ||
     product.seo?.description ||
-    'Competition-ready equipment with verified Shopify variants and availability.';
+    fallbackDescription;
+  const shortDescription = getShortDescription(detailCopy);
   const proxiedDescriptionHtml = rewriteDescriptionImageUrls(descriptionHtml);
   const variantNodes = variants?.nodes || [];
   const productMeta = [
@@ -145,7 +158,7 @@ export default function Product() {
         <ProductGallery
           fallbackImage={mainImage}
           images={galleryImages}
-          title={title}
+          title={displayTitle}
         />
         <Suspense fallback={<RecommendationSkeleton />}>
           <Await resolve={recommendations}>
@@ -168,8 +181,9 @@ export default function Product() {
           ))}
         </p>
         <h1 className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-black leading-none">
-          {title}
+          {displayTitle}
         </h1>
+        <p className="product-short-description">{shortDescription}</p>
 
         <div className="my-6 grid gap-4 border-y border-[#d9e0e7] py-5 sm:grid-cols-[1fr_auto] sm:items-center">
           <strong className="text-3xl leading-none">
@@ -276,6 +290,7 @@ function ProductRecommendations({currentProductId, products}) {
       </header>
       <div className="product-recommendation-grid">
         {recommendations.map((product) => {
+          const displayTitle = getProductDisplayTitle(product);
           const variant = product.selectedOrFirstAvailableVariant;
           const canQuickAdd =
             variant?.availableForSale && product.variants?.nodes.length === 1;
@@ -288,7 +303,7 @@ function ProductRecommendations({currentProductId, products}) {
               >
                 {product.featuredImage ? (
                   <img
-                    alt={product.featuredImage.altText || product.title}
+                    alt={product.featuredImage.altText || displayTitle}
                     loading="lazy"
                     src={product.featuredImage.url}
                   />
@@ -296,7 +311,7 @@ function ProductRecommendations({currentProductId, products}) {
               </Link>
               <div className="product-recommendation-copy">
                 <Link to={`/products/${product.handle}`}>
-                  <h3>{product.title}</h3>
+                  <h3>{displayTitle}</h3>
                 </Link>
                 <Money data={product.priceRange.minVariantPrice} />
               </div>
@@ -574,6 +589,56 @@ function getGalleryImages({mediaNodes}) {
 
 function getImageKey(image) {
   return image?.url || image?.id || '';
+}
+
+function getShortDescription(copy) {
+  const normalized = copy.replace(/\s+/g, ' ').trim();
+  const maxLength = 220;
+
+  if (normalized.length <= maxLength) return normalized;
+
+  const sentences = normalized.match(/[^.!?]+[.!?]+/g) || [];
+  const summary = sentences
+    .slice(0, 2)
+    .join(' ')
+    .trim();
+
+  if (summary && summary.length <= maxLength) return summary;
+
+  const clipped = normalized.slice(0, maxLength + 1);
+  const lastSpace = clipped.lastIndexOf(' ');
+
+  return `${clipped.slice(0, lastSpace > 150 ? lastSpace : maxLength).trim()}…`;
+}
+
+function getFallbackProductDescription({productType, title}) {
+  const searchable = `${title} ${productType || ''}`.toLowerCase();
+
+  if (/uniform|jacket|breeches|knickers|trousers/.test(searchable)) {
+    return 'Competition fencing apparel designed for dependable protection, unrestricted movement, and repeated training. Available in multiple size and handedness configurations.';
+  }
+
+  if (/glove/.test(searchable)) {
+    return 'A secure, flexible fencing glove built for confident weapon control and reliable hand protection during training and competition.';
+  }
+
+  if (/mask/.test(searchable)) {
+    return 'A competition-focused fencing mask designed for secure coverage, clear visibility, and a stable fit through fast exchanges.';
+  }
+
+  if (/shoe|footwear/.test(searchable)) {
+    return 'Fencing footwear designed for responsive footwork, stable changes of direction, and lasting comfort through lessons and competition.';
+  }
+
+  if (/foil|epee|sabre|sword|blade/.test(searchable)) {
+    return 'Competition-minded fencing equipment selected for balanced handling, dependable construction, and repeated use on the piste.';
+  }
+
+  if (/set|kit/.test(searchable)) {
+    return 'A coordinated fencing kit that brings essential training and competition equipment together in one practical setup.';
+  }
+
+  return 'Performance fencing equipment selected for dependable function, practical fit, and the demands of regular training.';
 }
 
 function rewriteDescriptionImageUrls(html) {

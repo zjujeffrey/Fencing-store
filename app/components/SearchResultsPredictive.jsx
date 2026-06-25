@@ -6,6 +6,7 @@ import {
   urlWithTrackingParams,
 } from '~/lib/search';
 import {useAside} from './Aside';
+import {getProductDisplayTitle} from '~/lib/productPresentation';
 
 /**
  * Component that renders predictive search results
@@ -194,7 +195,7 @@ function SearchResultsPredictiveProducts({term, products, closeSearch}) {
                   />
                 )}
                 <div>
-                  <p>{product.title}</p>
+                  <p>{getProductDisplayTitle(product)}</p>
                   <small>{price && <Money data={price} />}</small>
                 </div>
               </Link>

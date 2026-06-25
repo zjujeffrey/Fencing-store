@@ -1261,6 +1261,29 @@ a {
   position: static;
 }
 
+.product-short-description {
+  color: var(--bc-ink-soft);
+  display: -webkit-box;
+  font-size: 0.96rem;
+  line-height: 1.7;
+  margin: -0.15rem 0 0;
+  max-width: 42rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.shop-product-summary {
+  color: var(--bc-muted);
+  display: -webkit-box;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  min-height: 2.55rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .product-gallery-column {
   align-self: start;
   display: grid;

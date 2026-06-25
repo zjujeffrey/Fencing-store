@@ -1,5 +1,6 @@
 import {Link} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
+import {getProductDisplayTitle} from '~/lib/productPresentation';
 import {useVariantUrl} from '~/lib/variants';
 
 /**
@@ -14,6 +15,7 @@ import {useVariantUrl} from '~/lib/variants';
 export function ProductItem({product, loading}) {
   const variantUrl = useVariantUrl(product.handle);
   const image = product.featuredImage;
+  const displayTitle = getProductDisplayTitle(product);
   return (
     <Link
       className="product-item"
@@ -24,7 +26,7 @@ export function ProductItem({product, loading}) {
       {image && (
         <div className="product-item-image">
           <Image
-            alt={image.altText || product.title}
+            alt={image.altText || displayTitle}
             aspectRatio="1/1"
             data={image}
             loading={loading}
@@ -32,7 +34,7 @@ export function ProductItem({product, loading}) {
           />
         </div>
       )}
-      <h4>{product.title}</h4>
+      <h4>{displayTitle}</h4>
       <small>
         <Money data={product.priceRange.minVariantPrice} />
       </small>
