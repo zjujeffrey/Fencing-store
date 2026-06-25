@@ -515,7 +515,7 @@ a {
 .bc-product-card > div,
 .product-item-image {
   aspect-ratio: 1;
-  background: var(--bc-paper);
+  background: #fff;
   margin-bottom: 1.1rem;
   overflow: hidden;
 }
@@ -524,14 +524,14 @@ a {
 .product-item-image img {
   height: 100%;
   object-fit: contain;
-  padding: 0.75rem;
-  transition: transform 300ms ease;
+  padding: 8%;
+  transition: opacity 180ms ease;
   width: 100%;
 }
 
 .bc-product-card:hover img,
 .product-item:hover img {
-  transform: scale(1.025);
+  opacity: 0.9;
 }
 
 .bc-product-card h3,
@@ -1282,6 +1282,28 @@ a {
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.shop-product-image {
+  align-items: center;
+  aspect-ratio: 1;
+  background: #fff;
+  border-bottom: 1px solid var(--bc-line);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.shop-product-image img {
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 180ms ease;
+  width: 100%;
+}
+
+.shop-product-image:hover img {
+  opacity: 0.9;
 }
 
 .product-gallery-column {
@@ -2351,20 +2373,21 @@ button.reset:hover:not(:has(> *)) {
 
 .product-recommendation-image {
   aspect-ratio: 1;
-  background: #f1f2ef;
+  background: #fff;
   display: block;
   overflow: hidden;
+  padding: 8%;
 }
 
 .product-recommendation-image img {
   height: 100%;
-  object-fit: cover;
-  transition: transform 220ms ease;
+  object-fit: contain;
+  transition: opacity 180ms ease;
   width: 100%;
 }
 
 .product-recommendation-card:hover .product-recommendation-image img {
-  transform: scale(1.025);
+  opacity: 0.9;
 }
 
 .product-recommendation-copy {

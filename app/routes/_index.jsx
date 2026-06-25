@@ -270,7 +270,7 @@ function EditorialTiles({eyebrow, title, tiles}) {
           <Link className="bc-editorial-tile" key={tile.title} to={tile.to}>
             <img alt="" src={tile.image} />
             <span className="bc-editorial-tile-shade" />
-            <div>
+            <div className="bc-product-card-image">
               <small>{tile.number}</small>
               <h3>{tile.title}</h3>
               <p>{tile.copy}</p>

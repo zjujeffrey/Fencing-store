@@ -253,21 +253,16 @@ function ProductCard({product}) {
   return (
     <article className="min-w-0 overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm">
       <Link
-        className="group block aspect-[4/3] overflow-hidden bg-[#d9e0e7]"
+        className="shop-product-image"
         to={`/products/${product.handle}`}
       >
         {product.featuredImage ? (
           <img
             alt={product.featuredImage.altText || displayTitle}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             src={product.featuredImage.url}
           />
         ) : (
-          <img
-            alt=""
-            className="h-full w-full object-cover"
-            src={fencerMask}
-          />
+          <img alt="" src={fencerMask} />
         )}
       </Link>
       <div className="p-5">
