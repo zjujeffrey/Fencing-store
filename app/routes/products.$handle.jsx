@@ -15,9 +15,16 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
 import {
+  getProductDetailContent,
   getProductDisplayDescription,
   getProductDisplayTitle,
 } from '~/lib/productPresentation';
+import {
+  filterShopifyGalleryImages,
+  getLocalizedGalleryImages,
+  getProductCardImage,
+  getSelectableVariantImage,
+} from '~/lib/productImageLocalization';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 /**
@@ -118,22 +125,33 @@ export default function Product() {
 
   const {
     title,
-    descriptionHtml,
     description,
     vendor,
     productType,
     tags = [],
     featuredImage,
     media,
-    variants,
   } = product;
   const displayTitle = getProductDisplayTitle(product);
   const displayDescription = getProductDisplayDescription(product);
-  const galleryImages = getGalleryImages({
-    mediaNodes: media?.nodes,
-  });
+  const shopifyGalleryImages = filterShopifyGalleryImages(
+    product.handle,
+    getGalleryImages({
+      mediaNodes: media?.nodes,
+    }),
+  );
+  const localizedGalleryImages = getLocalizedGalleryImages(product.handle);
+  const variantImage = getSelectableVariantImage(product.handle, selectedVariant);
+  const galleryImages = dedupeImages([
+    variantImage,
+    ...shopifyGalleryImages,
+    ...localizedGalleryImages,
+  ].filter(Boolean));
   const mainImage =
-    selectedVariant?.image || galleryImages[0] || featuredImage;
+    variantImage ||
+    shopifyGalleryImages[0] ||
+    featuredImage ||
+    localizedGalleryImages[0];
   const fallbackDescription = getFallbackProductDescription({
     productType,
     title,
@@ -144,16 +162,18 @@ export default function Product() {
     product.seo?.description ||
     fallbackDescription;
   const shortDescription = getShortDescription(detailCopy);
-  const proxiedDescriptionHtml = rewriteDescriptionImageUrls(descriptionHtml);
-  const variantNodes = variants?.nodes || [];
-  const productMeta = [
-    vendor,
-    productType,
-    selectedVariant?.sku ? `SKU ${selectedVariant.sku}` : null,
-  ].filter(Boolean);
+  const detailContent = getProductDetailContent(product);
 
   return (
-    <main className="product-page grid gap-8 px-5 py-8 md:grid-cols-[1.05fr_.78fr] md:px-14 md:py-14">
+    <main className="product-page">
+      <nav className="product-breadcrumbs" aria-label="Breadcrumb">
+        <Link to="/">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link to="/shop">Shop</Link>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{displayTitle}</span>
+      </nav>
+
       <section className="product-gallery-column min-w-0">
         <ProductGallery
           fallbackImage={mainImage}
@@ -172,30 +192,30 @@ export default function Product() {
         </Suspense>
       </section>
 
-      <section className="product-buy-panel min-w-0 self-start rounded-lg border border-[#d9e0e7] bg-white p-5 shadow-sm md:p-6">
-        <p className="mb-3 flex flex-wrap gap-2 text-xs font-black uppercase text-[#61707f]">
-          {productMeta.map((item) => (
-            <span className="rounded bg-[#f7f8fa] px-2 py-1" key={item}>
-              {item}
-            </span>
-          ))}
+      <section className="product-buy-panel min-w-0 self-start">
+        <p className="product-kicker">
+          {productType || 'Performance fencing equipment'}
         </p>
-        <h1 className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-black leading-none">
-          {displayTitle}
-        </h1>
+        <h1>{displayTitle}</h1>
         <p className="product-short-description">{shortDescription}</p>
+        <ul className="product-highlight-list">
+          {detailContent.features.slice(0, 3).map(([label]) => (
+            <li key={label}>{label}</li>
+          ))}
+        </ul>
 
-        <div className="my-6 grid gap-4 border-y border-[#d9e0e7] py-5 sm:grid-cols-[1fr_auto] sm:items-center">
-          <strong className="text-3xl leading-none">
+        <div className="product-price-row">
+          <div>
             <ProductPrice
               price={selectedVariant?.price}
               compareAtPrice={selectedVariant?.compareAtPrice}
             />
-          </strong>
-          <span className={`inline-flex min-h-9 items-center justify-center rounded px-3 text-sm font-black ${
+            <p>Taxes and shipping calculated at checkout.</p>
+          </div>
+          <span className={`product-stock-status ${
             selectedVariant?.availableForSale
-              ? 'bg-[#0a7c86]/10 text-[#0a7c86]'
-              : 'bg-[#c92337]/10 text-[#c92337]'
+              ? 'is-available'
+              : 'is-unavailable'
           }`}>
             {selectedVariant?.availableForSale ? 'In stock' : 'Sold out'}
           </span>
@@ -206,52 +226,24 @@ export default function Product() {
           selectedVariant={selectedVariant}
         />
 
-        <dl className="mt-6 grid gap-3 border-t border-[#d9e0e7] pt-5 text-sm">
-          {selectedVariant?.sku ? (
-            <div className="flex justify-between gap-4">
-              <dt className="font-black text-[#101820]">SKU</dt>
-              <dd className="text-right text-[#61707f]">{selectedVariant.sku}</dd>
-            </div>
-          ) : null}
-          <div className="flex justify-between gap-4">
-            <dt className="font-black text-[#101820]">Dispatch</dt>
-            <dd className="text-right text-[#61707f]">Ships in 1-2 business days</dd>
-          </div>
-          {productType ? (
-            <div className="flex justify-between gap-4">
-              <dt className="font-black text-[#101820]">Type</dt>
-              <dd className="text-right text-[#61707f]">{productType}</dd>
-            </div>
-          ) : null}
-        </dl>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          {[
-            'FIE sourcing',
-            'Club orders',
-            'Secure checkout',
-          ].map((label) => (
-            <div className="product-assurance" key={label}>
-              <span aria-hidden="true">◆</span>
-              <strong>{label}</strong>
-            </div>
-          ))}
-        </div>
+        <ProductPurchaseMeta
+          productType={productType}
+          selectedVariant={selectedVariant}
+          vendor={vendor}
+        />
       </section>
 
-      <section className="product-details-section min-w-0 md:col-span-2">
+      <section className="product-details-section min-w-0">
         <ProductDetailsTabs
-          descriptionHtml={proxiedDescriptionHtml}
           detailCopy={detailCopy}
-          galleryImages={galleryImages}
           product={{
+            handle: product.handle,
             title,
             vendor,
             productType,
             tags,
           }}
           selectedVariant={selectedVariant}
-          variantNodes={variantNodes}
         />
       </section>
 
@@ -291,6 +283,7 @@ function ProductRecommendations({currentProductId, products}) {
       <div className="product-recommendation-grid">
         {recommendations.map((product) => {
           const displayTitle = getProductDisplayTitle(product);
+          const image = getProductCardImage(product);
           const variant = product.selectedOrFirstAvailableVariant;
           const canQuickAdd =
             variant?.availableForSale && product.variants?.nodes.length === 1;
@@ -301,11 +294,11 @@ function ProductRecommendations({currentProductId, products}) {
                 className="product-recommendation-image"
                 to={`/products/${product.handle}`}
               >
-                {product.featuredImage ? (
+                {image ? (
                   <img
-                    alt={product.featuredImage.altText || displayTitle}
+                    alt={image.altText || displayTitle}
                     loading="lazy"
-                    src={product.featuredImage.url}
+                    src={image.url}
                   />
                 ) : null}
               </Link>
@@ -359,20 +352,38 @@ function RecommendationSkeleton() {
   );
 }
 
+function ProductPurchaseMeta({productType, selectedVariant, vendor}) {
+  const rows = [
+    ['Reference', selectedVariant?.sku || 'Confirmed at checkout'],
+    ['Brand', vendor || 'BladeCraft'],
+    ['Category', productType || 'Fencing equipment'],
+    ['Dispatch', 'Usually ships in 1-2 business days'],
+  ];
+
+  return (
+    <aside className="product-purchase-meta">
+      <dl>
+        {rows.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </aside>
+  );
+}
+
 function ProductDetailsTabs({
-  descriptionHtml,
   detailCopy,
-  galleryImages,
   product,
   selectedVariant,
-  variantNodes,
 }) {
   const tabs = [
     {id: 'description', label: 'Description'},
     {id: 'specifications', label: 'Specifications'},
-    {id: 'sizing', label: 'Sizing & care'},
-    {id: 'shipping', label: 'Shipping'},
-    {id: 'variants', label: `Variants (${variantNodes.length})`},
+    {id: 'sizing', label: 'Fit & care'},
+    {id: 'shipping', label: 'Delivery'},
   ];
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
@@ -398,10 +409,8 @@ function ProductDetailsTabs({
       <div className="product-info-panel" id={`product-tab-${activeTab}`} role="tabpanel">
         {activeTab === 'description' ? (
           <ProductDescription
-            descriptionHtml={descriptionHtml}
             detailCopy={detailCopy}
-            galleryImages={galleryImages}
-            title={product.title}
+            product={product}
           />
         ) : null}
 
@@ -412,47 +421,45 @@ function ProductDetailsTabs({
           />
         ) : null}
 
-        {activeTab === 'sizing' ? <SizingAndCare /> : null}
+        {activeTab === 'sizing' ? <SizingAndCare product={product} /> : null}
 
         {activeTab === 'shipping' ? <ShippingPanel /> : null}
-
-        {activeTab === 'variants' ? <VariantList variantNodes={variantNodes} /> : null}
       </div>
     </div>
   );
 }
 
-function ProductDescription({descriptionHtml, detailCopy, galleryImages, title}) {
-  if (descriptionHtml) {
-    return (
-      <>
-        <p className="mb-3 text-xs font-black uppercase text-[#c92337]">
-          Product details
-        </p>
-        <div
-          className="product-detail-copy max-w-4xl leading-8 text-[#61707f]"
-          dangerouslySetInnerHTML={{__html: descriptionHtml}}
-        />
-      </>
-    );
-  }
+function ProductDescription({detailCopy, product}) {
+  const content = getProductDetailContent(product);
 
-  if (galleryImages.length) {
-    return (
-      <div className="product-detail-gallery grid gap-4 md:grid-cols-2">
-        {galleryImages.map((image) => (
-          <img
-            alt={image.altText || title}
-            className="w-full rounded-lg border border-[#d9e0e7] bg-[#f7f8fa] object-contain"
-            key={image.id || image.url}
-            src={image.url}
-          />
+  return (
+    <div className="product-overview">
+      <div className="product-overview-intro">
+        <p className="bc-eyebrow">{content.eyebrow}</p>
+        <h2>{content.heading}</h2>
+        <p>{content.intro || detailCopy}</p>
+      </div>
+      <div className="product-description-callout">
+        <strong>BladeCraft note</strong>
+        <p>
+          Selected for fencers who need equipment that is easy to understand,
+          practical to fit, and ready for regular club use.
+        </p>
+      </div>
+      <div className="product-overview-features">
+        {content.features.map(([title, copy]) => (
+          <article key={title}>
+            <h3>{title}</h3>
+            <p>{copy}</p>
+          </article>
         ))}
       </div>
-    );
-  }
-
-  return <p className="max-w-4xl leading-8 text-[#61707f]">{detailCopy}</p>;
+      <aside className="product-overview-note">
+        <strong>Before you order</strong>
+        <p>{content.note}</p>
+      </aside>
+    </div>
+  );
 }
 
 function ProductSpecifications({product, selectedVariant}) {
@@ -465,32 +472,48 @@ function ProductSpecifications({product, selectedVariant}) {
   ];
 
   return (
-    <dl className="product-spec-table">
-      {rows.map(([label, value]) => (
-        <div key={label}>
-          <dt>{label}</dt>
-          <dd>{value}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="product-spec-layout">
+      <dl className="product-spec-table">
+        {rows.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <aside className="product-spec-checklist">
+        <h3>Before adding to cart</h3>
+        <ul>
+          <li>Confirm size, color, handedness, and weapon compatibility.</li>
+          <li>Review the gallery images for charts or option details.</li>
+          <li>Ask your coach or club armorer when ordering competition gear.</li>
+        </ul>
+      </aside>
+    </div>
   );
 }
 
-function SizingAndCare() {
+function SizingAndCare({product}) {
+  const isFootwear = /shoe|footwear/i.test(
+    `${product.title} ${product.productType || ''}`,
+  );
+
   return (
-    <div className="grid gap-5 leading-7 text-[#61707f] md:grid-cols-2">
+    <div className="product-guidance-grid">
       <div>
-        <h3 className="mb-2 text-lg font-black text-[#101820]">Sizing</h3>
+        <h3>Choosing your size</h3>
         <p>
-          Confirm height, weight, dominant hand, and competition category before
-          checkout. Club orders can be checked size-by-size before fulfillment.
+          {isFootwear
+            ? 'Select your usual EU shoe size. If you are between sizes or prefer extra room for fencing socks, choose the larger size.'
+            : 'Confirm height, weight, dominant hand, and competition category before checkout. Club orders can be checked size-by-size before fulfillment.'}
         </p>
       </div>
       <div>
-        <h3 className="mb-2 text-lg font-black text-[#101820]">Care</h3>
+        <h3>Product care</h3>
         <p>
-          Follow the garment label. Keep masks and weapons dry after use, and
-          inspect cords, seams, and protective layers before competition.
+          {isFootwear
+            ? 'Air dry after training, remove loose dirt with a soft brush, and avoid machine washing or direct heat.'
+            : 'Follow the garment label. Keep masks and weapons dry after use, and inspect cords, seams, and protective layers before competition.'}
         </p>
       </div>
     </div>
@@ -499,37 +522,18 @@ function SizingAndCare() {
 
 function ShippingPanel() {
   return (
-    <div className="grid gap-5 leading-7 text-[#61707f] md:grid-cols-3">
+    <div className="product-guidance-grid product-guidance-grid-three">
       {[
         ['Dispatch', 'Most available items ship in 1-2 business days after payment confirmation.'],
         ['Club orders', 'Bulk orders can be quoted and confirmed before checkout.'],
         ['Returns', 'Return eligibility depends on product condition, sizing, and customization.'],
       ].map(([title, copy]) => (
         <div key={title}>
-          <h3 className="mb-2 text-lg font-black text-[#101820]">{title}</h3>
+          <h3>{title}</h3>
           <p>{copy}</p>
         </div>
       ))}
     </div>
-  );
-}
-
-function VariantList({variantNodes}) {
-  if (!variantNodes.length) {
-    return <p className="text-[#61707f]">No variant information available.</p>;
-  }
-
-  return (
-    <ul className="product-variant-list grid gap-2 text-sm text-[#61707f]">
-      {variantNodes.map((variant) => (
-        <li className="flex justify-between gap-4" key={variant.id}>
-          <span>{variant.title}</span>
-          <span className="font-black text-[#101820]">
-            <ProductPrice price={variant.price} />
-          </span>
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -591,6 +595,13 @@ function getImageKey(image) {
   return image?.url || image?.id || '';
 }
 
+function dedupeImages(images) {
+  return images.filter((image, index, allImages) => {
+    const key = getImageKey(image);
+    return key && allImages.findIndex((item) => getImageKey(item) === key) === index;
+  });
+}
+
 function getShortDescription(copy) {
   const normalized = copy.replace(/\s+/g, ' ').trim();
   const maxLength = 220;
@@ -639,30 +650,6 @@ function getFallbackProductDescription({productType, title}) {
   }
 
   return 'Performance fencing equipment selected for dependable function, practical fit, and the demands of regular training.';
-}
-
-function rewriteDescriptionImageUrls(html) {
-  if (!html) return '';
-
-  return html.replace(
-    /(<img\b[^>]*?\bsrc=)(["'])(https?:\/\/[^"']+)(\2)/gi,
-    (match, prefix, quote, sourceUrl, suffix) => {
-      if (!shouldProxyImageUrl(sourceUrl)) return match;
-
-      return `${prefix}${quote}/api/image-proxy?url=${encodeURIComponent(
-        sourceUrl,
-      )}${suffix}`;
-    },
-  );
-}
-
-function shouldProxyImageUrl(sourceUrl) {
-  try {
-    const url = new URL(sourceUrl);
-    return /(^|\.)((alicdn|taobao|tbcdn)\.com|alicdn\.com)$/i.test(url.hostname);
-  } catch {
-    return false;
-  }
 }
 
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
@@ -806,6 +793,12 @@ const PRODUCT_RECOMMENDATIONS_QUERY = `#graphql
       featuredImage {
         url
         altText
+      }
+      images(first: 8) {
+        nodes {
+          url
+          altText
+        }
       }
       variants(first: 2) {
         nodes {

@@ -6,6 +6,7 @@ import fencerWeapon from '~/assets/fencer-weapon.jpg';
 import fencerClothing from '~/assets/fencer-clothing.jpg';
 import fencerScoring from '~/assets/fencer-scoring.jpg';
 import gearBag from '~/assets/gear-bag.jpg';
+import {getProductCardImage} from '~/lib/productImageLocalization';
 import {getProductDisplayTitle} from '~/lib/productPresentation';
 
 export const meta = () => [
@@ -299,6 +300,7 @@ function ProductGrid({products}) {
       {products.map((product) => {
         const price = product.priceRange.minVariantPrice;
         const displayTitle = getProductDisplayTitle(product);
+        const image = getProductCardImage(product);
         return (
           <Link
             className="bc-product-card"
@@ -306,10 +308,10 @@ function ProductGrid({products}) {
             to={`/products/${product.handle}`}
           >
             <div>
-              {product.featuredImage ? (
+              {image ? (
                 <img
-                  alt={product.featuredImage.altText || displayTitle}
-                  src={product.featuredImage.url}
+                  alt={image.altText || displayTitle}
+                  src={image.url}
                 />
               ) : (
                 <img alt="" src={fencerMask} />
@@ -348,6 +350,12 @@ const FEATURED_PRODUCTS_QUERY = `#graphql
         featuredImage {
           url
           altText
+        }
+        images(first: 8) {
+          nodes {
+            url
+            altText
+          }
         }
         priceRange {
           minVariantPrice {

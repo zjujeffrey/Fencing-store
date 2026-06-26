@@ -11,6 +11,7 @@ import categoryScoring from '~/assets/category-scoring.jpg';
 import categoryStarterKits from '~/assets/category-starter-kits.jpg';
 import categoryWeapons from '~/assets/category-weapons.jpg';
 import {FENCING_CATEGORIES} from '~/lib/fencingCategories';
+import {getProductCardImage} from '~/lib/productImageLocalization';
 import {
   getProductDisplayDescription,
   getProductDisplayTitle,
@@ -249,6 +250,7 @@ function ProductCard({product}) {
   const selectedVariant = product.selectedOrFirstAvailableVariant;
   const displayTitle = getProductDisplayTitle(product);
   const displayDescription = getProductDisplayDescription(product);
+  const image = getProductCardImage(product);
 
   return (
     <article className="min-w-0 overflow-hidden rounded-lg border border-[#d9e0e7] bg-white shadow-sm">
@@ -256,10 +258,10 @@ function ProductCard({product}) {
         className="shop-product-image"
         to={`/products/${product.handle}`}
       >
-        {product.featuredImage ? (
+        {image ? (
           <img
-            alt={product.featuredImage.altText || displayTitle}
-            src={product.featuredImage.url}
+            alt={image.altText || displayTitle}
+            src={image.url}
           />
         ) : (
           <img alt="" src={fencerMask} />
@@ -477,6 +479,12 @@ const SHOP_COLLECTIONS_QUERY = `#graphql
             featuredImage {
               url
               altText
+            }
+            images(first: 8) {
+              nodes {
+                url
+                altText
+              }
             }
             priceRange {
               minVariantPrice {

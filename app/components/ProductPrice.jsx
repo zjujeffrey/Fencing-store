@@ -7,11 +7,16 @@ import {Money} from '@shopify/hydrogen';
  * }}
  */
 export function ProductPrice({price, compareAtPrice}) {
+  const isOnSale =
+    price &&
+    compareAtPrice &&
+    Number(compareAtPrice.amount) > Number(price.amount);
+
   return (
     <div className="product-price">
-      {compareAtPrice ? (
+      {isOnSale ? (
         <div className="product-price-on-sale">
-          {price ? <Money data={price} /> : null}
+          <Money data={price} />
           <s>
             <Money data={compareAtPrice} />
           </s>

@@ -13,6 +13,20 @@ export function ProductImage({image}) {
       </div>
     );
   }
+
+  if (image.url?.startsWith('/')) {
+    return (
+      <div className="product-image">
+        <img
+          alt={image.altText || 'Product Image'}
+          height={image.height}
+          src={image.url}
+          width={image.width}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="product-image">
       <Image
