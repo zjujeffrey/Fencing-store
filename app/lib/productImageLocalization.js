@@ -2,6 +2,14 @@ const LOCALIZED_GALLERY_IMAGES = {
   'zhang-brand-electric-competition-certified-foils-epees-and-sabres-complete-fencing-swords-for-children-and-adults-stainless-gold-and-colorful':
     [
       {
+        id: 'localized-zhang-electric-taobao-main-poster',
+        url: '/assets/product-details/zhang-electric-weapons/taobao-main-poster-en.svg',
+        altText:
+          'Zhang electric fencing weapons in silver, gold, iridescent, and blue finishes',
+        width: 800,
+        height: 800,
+      },
+      {
         id: 'localized-zhang-electric-finishes',
         url: '/assets/product-details/zhang-electric-weapons/available-finishes-en.png',
         altText:
@@ -23,6 +31,57 @@ const LOCALIZED_GALLERY_IMAGES = {
         id: 'localized-af-youth-size-guide',
         url: '/assets/product-details/af-youth-set/size-guide-en.png',
         altText: 'AF youth fencing set size guide',
+        width: 1400,
+        height: 1400,
+      },
+    ],
+  'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+    [
+      {
+        id: 'localized-cfa-13-piece-starter-hero',
+        url: '/assets/product-details/cfa-13-piece-starter/hero-en.svg',
+        altText: 'CFA 13-piece starter fencing set',
+        width: 1400,
+        height: 1400,
+      },
+      {
+        id: 'localized-cfa-13-piece-starter-overview',
+        url: '/assets/product-details/cfa-13-piece-starter/kit-overview-en.svg',
+        altText: 'CFA 13-piece starter fencing set kit overview',
+        width: 1400,
+        height: 1400,
+      },
+    ],
+  'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+    [
+      {
+        id: 'localized-cfa-foil-starter-hero',
+        url: '/assets/product-details/cfa-foil-starter/hero-en.svg',
+        altText: 'CFA foil beginner fencing set',
+        width: 1400,
+        height: 1400,
+      },
+      {
+        id: 'localized-cfa-foil-starter-overview',
+        url: '/assets/product-details/cfa-foil-starter/kit-overview-en.svg',
+        altText: 'CFA foil beginner fencing set kit overview',
+        width: 1400,
+        height: 1400,
+      },
+    ],
+  'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+    [
+      {
+        id: 'localized-cfa-epee-starter-hero',
+        url: '/assets/product-details/cfa-epee-starter/hero-en.svg',
+        altText: 'CFA epee beginner fencing set',
+        width: 1400,
+        height: 1400,
+      },
+      {
+        id: 'localized-cfa-epee-starter-overview',
+        url: '/assets/product-details/cfa-epee-starter/kit-overview-en.svg',
+        altText: 'CFA epee beginner fencing set kit overview',
         width: 1400,
         height: 1400,
       },
@@ -205,9 +264,39 @@ const LOCALIZED_VARIANT_IMAGES = {
     },
 };
 
+const PRODUCT_CARD_IMAGE_OVERRIDES = {
+  'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+    {
+      url: '/assets/product-details/cfa-13-piece-starter/hero-en.svg',
+      altText: 'CFA 13-piece starter fencing set',
+      width: 1400,
+      height: 1400,
+    },
+  'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+    {
+      url: '/assets/product-details/cfa-foil-starter/hero-en.svg',
+      altText: 'CFA foil beginner fencing set',
+      width: 1400,
+      height: 1400,
+    },
+  'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+    {
+      url: '/assets/product-details/cfa-epee-starter/hero-en.svg',
+      altText: 'CFA epee beginner fencing set',
+      width: 1400,
+      height: 1400,
+    },
+};
+
 const SHOPIFY_GALLERY_ALLOWLIST = {
   'af-full-set-of-fencing-equipment-for-children-cfa450n-new-standard-certified-competition-11-piece-set-fencing-set-competition':
     ['O1CN01QSB1rv2JW4rLFyJHx', 'O1CN01RlJUDm2JW4rGnq5CP'],
+  'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+    ['O1CN01EknHM52JW4ofiBNAo'],
+  'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+    ['O1CN01Pin5Fg2JW4l5HmnzN'],
+  'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+    ['O1CN01Pin5Fg2JW4l5HmnzN_crop'],
   'beyond-fencing-equipment-special-competition-gloves-for-foil-and-epee-non-slip-suitable-for-children-and-adults-for-domestic-a-level-competitions':
     [
       'O1CN01BPjnI62JW59trwHED',
@@ -290,6 +379,22 @@ const PRODUCT_CARD_IMAGE_ALLOWLIST = {
 const VARIANT_IMAGE_BLOCKLIST = {
   'af-full-set-of-fencing-equipment-for-children-cfa450n-new-standard-certified-competition-11-piece-set-fencing-set-competition':
     ['O1CN01B3foJF2JW4rIGdRUS'],
+  'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+    [
+      'O1CN01hfJ4zD2JW4obex6bM',
+      'O1CN018Uir012JW4raJpUm5',
+    ],
+  'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+    [
+      'O1CN01dWVhjF1Bs2exxvHoc',
+      'O1CN01uHlQVd2JW4lpLuEUe',
+    ],
+  'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+    [
+      'O1CN01VY4aNd2JW4mD1xBnO_crop',
+      'O1CN01bW8utm2JW4mCblXWH',
+      'O1CN01CjvKVY2JW4ljLQJF6',
+    ],
   'fencing-sword-bag-team-bag-with-large-wheels-can-hold-two-sets-of-equipment-has-inner-compartments-for-fencing-competitions':
     ['O1CN01bs6L1V2JW5AmXo2PS'],
   'fie-certified-colored-fencing-heavy-sword-mask-detachable-lining-for-easy-cleaning-suitable-for-competitions':
@@ -334,6 +439,9 @@ export function getLocalizedGalleryImages(handle) {
 }
 
 export function getProductCardImage(product) {
+  const override = PRODUCT_CARD_IMAGE_OVERRIDES[product?.handle];
+  if (override) return override;
+
   const candidates = [
     ...(product?.images?.nodes || []),
     product?.selectedOrFirstAvailableVariant?.image,

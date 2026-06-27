@@ -249,6 +249,7 @@ const FACET_LABELS = {
   color: 'Color',
   garment: 'Item',
   kit: 'Kit option',
+  protection: 'Protection level',
   cord: 'Cord type',
   bag: 'Bag style',
   age: 'Fit',
@@ -261,6 +262,7 @@ const FACET_ORDER = [
   'color',
   'finish',
   'garment',
+  'protection',
   'kit',
   'cord',
   'bag',
@@ -376,6 +378,14 @@ function parseStructuredOptionValue(name = '') {
   else if (/jacket/.test(text)) facets.garment = 'Jacket';
   else if (/trousers|breeches|pants/.test(text)) facets.garment = 'Breeches';
   else if (/vest|plastron/.test(text)) facets.garment = 'Underarm Protector';
+
+  if (/450n.*900n.*mask|450n jacket.*900n mask/.test(text)) {
+    facets.protection = '450N Apparel / 900N Mask';
+  } else if (/900n.*900n|900n set|1800n jacket/.test(text)) {
+    facets.protection = '900N Set';
+  } else if (/450n/.test(text)) {
+    facets.protection = '450N Set';
+  }
 
   if (/without sword bag/.test(text)) facets.kit = 'Set Only';
   else if (/roller sword bag|wheeled/.test(text)) facets.kit = 'With Wheeled Bag';

@@ -71,6 +71,24 @@ const PRODUCT_PRESENTATION = {
       description:
         'A coordinated 11-piece youth fencing kit built around CFA 450N protective equipment for lessons, club training, and competition preparation.',
     },
+  'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+    {
+      title: 'CFA 13-Piece Starter Fencing Set',
+      description:
+        'A full beginner fencing bundle with protective whites, mask, glove, weapon accessories, and bag options for first club and competition seasons.',
+    },
+  'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+    {
+      title: 'CFA Foil Beginner Fencing Set',
+      description:
+        'A complete foil-focused starter kit for youth and adult fencers, with 450N and 900N package options for lessons and early events.',
+    },
+  'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+    {
+      title: 'CFA Epee Beginner Fencing Set',
+      description:
+        'A complete epee starter bundle with protective clothing, mask, glove, weapon accessories, and protection-level options for developing fencers.',
+    },
 };
 
 export function getProductDisplayTitle(product) {
@@ -270,6 +288,48 @@ export function getProductDetailContent(product) {
         ],
         note:
           'Contents and protection ratings vary by selected option. Confirm weapon, handedness, size, and club requirements before purchase.',
+      },
+    'cfa-certified-fencing-set-entry-full-equipment-beginner-fencing-gear-13-piece-competition-set':
+      {
+        eyebrow: 'Starter equipment system',
+        heading: 'A complete 13-piece kit for new fencers moving into regular club training.',
+        intro:
+          'This starter bundle brings the core protective equipment and practical accessories into one purchase, making it easier for families, clubs, and new athletes to build a compatible first kit.',
+        features: [
+          ['Full kit bundle', 'Includes protective whites, mask, glove, socks, weapon accessories, and bag options depending on the selected package.'],
+          ['Protection choices', 'Select the 450N or 900N configuration according to the athlete’s level, coach guidance, and event requirements.'],
+          ['Club friendly', 'A practical setup for lessons, beginner competitions, and building consistent equipment habits from the start.'],
+        ],
+        note:
+          'Confirm size, weapon plan, handedness, and protection requirements with your coach before ordering.',
+      },
+    'cfa-new-regulation-certified-foil-beginner-set-for-children-and-adults-complete-fencing-equipment':
+      {
+        eyebrow: 'Foil starter kit',
+        heading: 'A foil-focused beginner set for lessons, drills, and first competitions.',
+        intro:
+          'Built around the needs of foil fencers, this package combines protective clothing with foil-ready essentials so a new athlete can start with a coherent equipment setup.',
+        features: [
+          ['Foil-ready configuration', 'The bundle is selected for foil training and includes the key accessories needed around the weapon setup.'],
+          ['450N and 900N options', 'Choose the protection level that matches the athlete’s age group, club rules, and event pathway.'],
+          ['Beginner friendly', 'A cleaner buying path for parents and first-time fencers who want fewer compatibility decisions.'],
+        ],
+        note:
+          'Foil event requirements can vary by club and competition. Check protection level, size, and handedness before checkout.',
+      },
+    'fencing-equipment-epee-set-complete-cfa-certified-new-rules-for-beginners-children-and-adults-fencing-gear':
+      {
+        eyebrow: 'Epee starter kit',
+        heading: 'A complete epee set for developing youth and adult fencers.',
+        intro:
+          'This epee bundle gathers protective clothing, mask, glove, weapon accessories, and carry options into a single starter system for regular practice and early events.',
+        features: [
+          ['Epee-ready setup', 'Selected around epee training needs, including the protective and electrical items new fencers commonly require.'],
+          ['Protection-level choices', 'Compare the 450N jacket with 900N mask option against the higher-protection package before ordering.'],
+          ['Simple first kit', 'Designed to reduce guesswork while still leaving room for coach-approved sizing and club requirements.'],
+        ],
+        note:
+          'One option appears to be a sizing guidance entry rather than a kit package. Use the selectable kit options for purchase decisions.',
       },
   }[product?.handle];
 
