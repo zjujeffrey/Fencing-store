@@ -17,6 +17,7 @@ const footerGroups = [
       ['Individual fencers', '/collections/all'],
       ['Club orders', '/club'],
       ['Program starter kits', '/shop?category=starter-kits'],
+      ['Beginner guides', '/pages/guides'],
       ['Sizing support', '/pages/sizing'],
     ],
   },

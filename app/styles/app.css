@@ -3516,6 +3516,267 @@ button.reset:hover:not(:has(> *)) {
   }
 }
 
+.bc-guide-page {
+  background: var(--bc-paper);
+}
+
+.bc-guide-hero {
+  padding-bottom: 4rem;
+}
+
+.bc-guide-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 auto;
+  max-width: 78rem;
+  padding: 0 2rem 6rem;
+}
+
+.bc-guide-card {
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  display: flex;
+  flex-direction: column;
+  min-height: 20rem;
+  padding: 2rem;
+}
+
+.bc-guide-card h2 {
+  font-size: 2rem;
+  line-height: 1.05;
+  margin: 0.85rem 0 1rem;
+}
+
+.bc-guide-card h2 a {
+  text-decoration: none;
+}
+
+.bc-guide-card > p:not(.bc-eyebrow) {
+  color: var(--bc-ink-soft);
+  flex: 1;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  margin: 0 0 1.75rem;
+}
+
+.bc-guide-cta,
+.bc-guide-related {
+  border-top: 1px solid var(--bc-line);
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 0 auto;
+  max-width: 78rem;
+  padding: 4.5rem 2rem;
+}
+
+.bc-guide-cta h2 {
+  font-size: clamp(2.2rem, 4vw, 4rem);
+  line-height: 1;
+  margin: 0.75rem 0 1rem;
+  max-width: 13ch;
+}
+
+.bc-guide-cta p:not(.bc-eyebrow) {
+  color: var(--bc-ink-soft);
+  line-height: 1.75;
+  margin: 0;
+  max-width: 42rem;
+}
+
+.bc-guide-cta-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-end;
+}
+
+.bc-guide-layout {
+  align-items: start;
+  display: grid;
+  gap: 4rem;
+  grid-template-columns: minmax(12rem, 16rem) minmax(0, 48rem);
+  justify-content: center;
+  padding: 0 2rem 6rem;
+}
+
+.bc-guide-sidebar {
+  border-top: 1px solid var(--bc-line);
+  padding-top: 1.5rem;
+  position: sticky;
+  top: calc(var(--header-height) + 2rem);
+}
+
+.bc-guide-sidebar nav {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.bc-guide-sidebar nav a {
+  color: var(--bc-ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.bc-guide-sidebar nav a:hover {
+  color: var(--bc-ink);
+}
+
+.bc-guide-article {
+  display: grid;
+  gap: 1rem;
+}
+
+.bc-guide-section {
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  scroll-margin-top: 7rem;
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+}
+
+.bc-guide-section h2,
+.bc-guide-faq h2 {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1;
+  margin: 0 0 1rem;
+}
+
+.bc-guide-section p,
+.bc-guide-callout p,
+.bc-guide-faq p {
+  color: var(--bc-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.bc-guide-list {
+  border-top: 1px solid var(--bc-line);
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 1.5rem 0 0;
+}
+
+.bc-guide-list li {
+  color: var(--bc-ink);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  padding-left: 1.4rem;
+  position: relative;
+}
+
+.bc-guide-list li::before {
+  background: var(--bc-signal);
+  content: '';
+  height: 0.42rem;
+  left: 0;
+  position: absolute;
+  top: 0.55rem;
+  width: 0.42rem;
+}
+
+.bc-guide-callout {
+  background: var(--bc-ink);
+  color: #fff;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.bc-guide-callout .bc-eyebrow,
+.bc-guide-callout p {
+  color: #fff;
+}
+
+.bc-guide-callout p:last-child {
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
+
+.bc-guide-actions {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding: 1.5rem;
+}
+
+.bc-guide-faq {
+  border-top: 1px solid var(--bc-line);
+  padding-top: 3rem;
+}
+
+.bc-guide-faq details {
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  margin-top: 0.75rem;
+  padding: 1.2rem 1.4rem;
+}
+
+.bc-guide-faq summary {
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.bc-guide-faq details p {
+  margin: 0.9rem 0 0;
+}
+
+.bc-guide-related {
+  display: block;
+}
+
+.bc-guide-related > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.bc-guide-related a {
+  background: #fff;
+  border: 1px solid var(--bc-line);
+  font-size: 0.78rem;
+  font-weight: 750;
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+}
+
+@media (max-width: 62rem) {
+  .bc-guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bc-guide-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bc-guide-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 44rem) {
+  .bc-guide-grid,
+  .bc-guide-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .bc-guide-card {
+    min-height: 0;
+  }
+
+  .bc-guide-cta-actions {
+    justify-content: flex-start;
+  }
+}
+
 /*
 * --------------------------------------------------
 * routes/blog._index.tsx
