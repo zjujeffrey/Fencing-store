@@ -48,8 +48,8 @@ export function PageLayout({
 function PromoBar() {
   return (
     <div className="bc-announcement">
-      <span>Free shipping on US orders over $149</span>
-      <Link to="/club">Club and program pricing available</Link>
+      <span>Sitewide sale: 20% off all fencing gear</span>
+      <Link to="/collections/all">Shop the sale</Link>
     </div>
   );
 }

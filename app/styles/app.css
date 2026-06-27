@@ -45,7 +45,7 @@ a {
 
 .bc-announcement {
   align-items: center;
-  background: var(--bc-ink);
+  background: #8f221c;
   color: #fff;
   display: flex;
   font-size: 0.68rem;
@@ -60,6 +60,7 @@ a {
 
 .bc-announcement a {
   color: #fff;
+  font-weight: 800;
   text-decoration: underline;
   text-underline-offset: 0.2rem;
 }
