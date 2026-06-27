@@ -17,6 +17,12 @@ const PRODUCT_PRESENTATION = {
       description:
         'FIE-certified 1600N protection for national and international competition, designed for secure coverage, visibility, and a stable fit.',
     },
+  'fie-certified-colored-fencing-heavy-sword-mask-detachable-lining-for-easy-cleaning-suitable-for-competitions':
+    {
+      title: 'FIE Colored Epee Mask',
+      description:
+        'FIE-certified colored epee mask with a detachable washable liner, stable rear strap, and multiple color options for competition and regular training.',
+    },
   'beyond-fencing-equipment-special-competition-gloves-for-foil-and-epee-non-slip-suitable-for-children-and-adults-for-domestic-a-level-competitions':
     {
       title: 'Beyond Competition Fencing Glove',
@@ -129,6 +135,29 @@ export function getProductDetailContent(product) {
         ],
         note:
           'Confirm weapon compatibility and measure around the head before selecting a size. Inspect the mesh and bib before every use.',
+      },
+    'fie-certified-colored-fencing-heavy-sword-mask-detachable-lining-for-easy-cleaning-suitable-for-competitions':
+      {
+        eyebrow: 'Colored epee protection',
+        heading: 'FIE-certified epee mask with a distinctive colored shell.',
+        intro:
+          'A competition-ready epee mask for fencers who want certified protection, a stable fit, and a color finish that stands out on the piste.',
+        features: [
+          [
+            'FIE certified',
+            'Built for competition use where FIE-certified protective equipment is required or preferred.',
+          ],
+          [
+            'Detachable liner',
+            'The removable lining makes drying and routine cleaning easier between practices and events.',
+          ],
+          [
+            'Color options',
+            'Choose from available color finishes, then confirm the correct mask size before checkout.',
+          ],
+        ],
+        note:
+          'This mask is intended for epee use. Confirm size, weapon compatibility, and event requirements before ordering.',
       },
     'beyond-fencing-equipment-special-competition-gloves-for-foil-and-epee-non-slip-suitable-for-children-and-adults-for-domestic-a-level-competitions':
       {

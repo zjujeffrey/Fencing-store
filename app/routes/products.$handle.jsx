@@ -142,16 +142,17 @@ export default function Product() {
   );
   const localizedGalleryImages = getLocalizedGalleryImages(product.handle);
   const variantImage = getSelectableVariantImage(product.handle, selectedVariant);
+  const preferLocalizedGallery = localizedGalleryImages.length > 1;
   const galleryImages = dedupeImages([
     variantImage,
-    ...shopifyGalleryImages,
-    ...localizedGalleryImages,
+    ...(preferLocalizedGallery ? localizedGalleryImages : shopifyGalleryImages),
+    ...(preferLocalizedGallery ? shopifyGalleryImages : localizedGalleryImages),
   ].filter(Boolean));
   const mainImage =
     variantImage ||
-    shopifyGalleryImages[0] ||
+    (preferLocalizedGallery ? localizedGalleryImages[0] : shopifyGalleryImages[0]) ||
     featuredImage ||
-    localizedGalleryImages[0];
+    (preferLocalizedGallery ? shopifyGalleryImages[0] : localizedGalleryImages[0]);
   const fallbackDescription = getFallbackProductDescription({
     productType,
     title,
